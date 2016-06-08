@@ -1,7 +1,8 @@
 #include <glog/logging.h>
 #include "glfw_app.hpp"
 
-glfw_app::glfw_app(std::function<void()> draw) : draw_proc(draw) {
+glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
+    : draw_proc(draw), setup_proc(setup) {
   if (!glfwInit()) {
     LOG(FATAL) << "failed to initialize glfw";
   }
@@ -20,14 +21,12 @@ glfw_app::glfw_app(std::function<void()> draw) : draw_proc(draw) {
   }
 }
 
-glfw_app::glfw_app()
-    : glfw_app::glfw_app([] { LOG(ERROR) << "no draw function set"; }) {}
-
 glfw_app::~glfw_app() { glfwTerminate(); }
 
 void glfw_app::run() {
 
   glfwMakeContextCurrent(_window);
+  setup_proc();
   while (!glfwWindowShouldClose(_window)) {
     draw_proc();
     glfwSwapBuffers(_window);

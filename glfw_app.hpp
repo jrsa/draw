@@ -10,12 +10,12 @@ private:
   GLFWwindow *_window;
 
 public:
-  glfw_app();
-  glfw_app(std::function<void()>);
+  glfw_app(std::function<void()> draw, std::function<void()> setup);
   ~glfw_app();
 
   void run();
   std::function<void()> draw_proc;
+  std::function<void()> setup_proc;
 };
 
 #endif
