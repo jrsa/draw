@@ -14,6 +14,7 @@ public:
   shader(std::string filename);
   ~shader();
 
+  GLuint program() { return _program; }
   void use();
 };
 
