@@ -33,3 +33,7 @@ void glfw_app::run() {
     glfwPollEvents();
   }
 }
+
+void glfw_app::set_key_proc(GLFWkeyfun _kp) {
+   glfwSetKeyCallback(_window, _kp);
+}

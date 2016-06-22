@@ -14,6 +14,7 @@ public:
   ~glfw_app();
 
   void run();
+  void set_key_proc(GLFWkeyfun);
   std::function<void()> draw_proc;
   std::function<void()> setup_proc;
 };
