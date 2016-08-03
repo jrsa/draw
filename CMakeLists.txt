@@ -36,7 +36,7 @@ set(sources
 
     glfw_app.cpp
     shader.cpp
-    model.cpp
+        billboard.cpp
 )
 
 add_executable(${target} ${sources})

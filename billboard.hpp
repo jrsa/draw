@@ -6,12 +6,12 @@ class shader;
 
 using namespace gl;
 
-struct model {
-  shader *p;
+class billboard {
   GLuint vbo, vao, attrCoord;
 
-  model();
-  ~model();
+public:
+  billboard();
+  ~billboard();
 
   void draw();
 
