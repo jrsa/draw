@@ -3,12 +3,12 @@
 
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
-#include "model.hpp"
+#include "billboard.hpp"
 #include "shader.hpp"
 
-#define SHADER_FN "/Users/jrsa/code/gl/draw/glsl/2"
+#define SHADER_FN "/Users/jrsa/code/gl/draw/glsl/3"
 
-model* m = nullptr;
+billboard* bb = nullptr;
 shader* s = nullptr;
 
 void keycb(GLFWwindow *window, int key, int, int, int) {
@@ -29,16 +29,16 @@ int main(int argc, char **argv) {
 
     // TODO: really fucking need another way to not use pointers,
     // preferably explicit initialization of gl resources, or scoping
-    // the model in such a way that RAII can work to allocate them
+    // the billboard in such a way that RAII can work to allocate them
     // when the context is ready
-    m = new model();
+    bb = new billboard();
     s = new shader(SHADER_FN);
   };
 
   auto draw_proc = [&] {
     gl::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     s->use();
-    m->draw();
+    bb->draw();
   };
 
   glfw_app gltest(draw_proc, setup_proc);
