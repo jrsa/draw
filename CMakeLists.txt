@@ -37,7 +37,7 @@ set(sources
     glfw_app.cpp
     shader.cpp
         billboard.cpp
-)
+        fbo.cpp fbo.h)
 
 add_executable(${target} ${sources})
 target_link_libraries(${target} ${libs})
