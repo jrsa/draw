@@ -4,5 +4,5 @@ in vec4 pos;
 out vec4 color;
 
 void main(void){
-    color = vec4(-pos.y, pos.x, 0.5, 1.0);
+    color = vec4(noise3(pos.xyz * 3.0) + 0.5, 1.0);
 }
