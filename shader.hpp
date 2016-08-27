@@ -16,6 +16,8 @@ public:
 
   GLuint program() { return _program; }
   void use();
+  void u1f(std::string, float);
+  void u2f(std::string, glm::vec2);
 };
 
 #endif

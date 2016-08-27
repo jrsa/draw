@@ -57,6 +57,18 @@ shader::~shader() { glDeleteProgram(_program); }
 
 void shader::use() { glUseProgram(_program); }
 
+void shader::u1f(std::string name, float value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform1f(u, value);
+}
+
+void shader::u2f(std::string name, glm::vec2 value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform2f(u, value.x, value.y);
+}
+
 void compile_info(const GLuint shader) {
   GLint status(0);
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
