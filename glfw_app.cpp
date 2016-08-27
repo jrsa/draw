@@ -14,7 +14,7 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  _window = glfwCreateWindow(640, 480, "glfw_app", nullptr, nullptr);
+  _window = glfwCreateWindow(640, 480, "", nullptr, nullptr);
 
   if (!_window) {
     LOG(FATAL) << "failed to create window";
@@ -36,4 +36,8 @@ void glfw_app::run() {
 
 void glfw_app::set_key_proc(GLFWkeyfun _kp) {
    glfwSetKeyCallback(_window, _kp);
+}
+
+void glfw_app::set_fbsize_proc(GLFWframebuffersizefun _p) {
+  glfwSetFramebufferSizeCallback(_window, _p);
 }
