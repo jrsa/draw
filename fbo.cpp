@@ -11,11 +11,10 @@ fbo::fbo(int h, int w): _colorbuffer_texture_obj(0), _fbo_obj(0) {
 
     // upload an empty texture, not confirmed necessary
     glBindTexture(GL_TEXTURE_2D, _colorbuffer_texture_obj);
-    glTexImage2D(GL_TEXTURE_2D, 0, (int)GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, (int)GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-    glTextureParameteri((int)GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (int)GL_NEAREST);
-    glTextureParameteri((int)GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (int)GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (int)GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (int)GL_NEAREST);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorbuffer_texture_obj, 0);
 }
