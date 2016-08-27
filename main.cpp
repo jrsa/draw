@@ -79,6 +79,10 @@ int main(int argc, char **argv) {
   glfw_app gltest(draw_proc, setup_proc);
 
   gltest.set_key_proc(keycb);
+  gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+    dest->u2f("dims", glm::vec2(width, height));
+  });
 
   gltest.run();
   return 0;
