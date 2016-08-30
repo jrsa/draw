@@ -29,6 +29,7 @@ set(libs
     ${GLFW3_LIBRARY}
     ${GLBINDING_LIBRARY}
     ${GLOG_LIBRARY}
+    "/Library/Frameworks/Syphon.framework"
 )
 
 set(sources
@@ -37,6 +38,7 @@ set(sources
     shader.cpp
     billboard.cpp
     fbo.cpp
+    syphon_server.mm
     )
 
 add_executable(${target} ${sources} main.cpp)
