@@ -5,7 +5,7 @@ out vec4 color;
 
 uniform vec2 dims;
 uniform float width;
-uniform float amp;
+//uniform float amp;
 uniform float scaleCoef;
 
 uniform sampler2D shampler;
