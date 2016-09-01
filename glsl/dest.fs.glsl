@@ -27,13 +27,19 @@ void main() {
 
     vec3 pixel = texture(shampler, tc).rgb;
 
-    float s = rgb2hsv(pixel).s;
+    vec3 s = rgb2hsv(pixel);
 
-    mat2 sca = mat2(1., 0., 0., 1.);
+    mat2 sca = mat2(1. + (-s.r*0.005), 0., 0., 1. + (s.g*0.005));
+
+    float angle = 0.2 * s.r;
+	mat2 rot = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));
     vec2 offs = vec2(1. / dims.x, 1. / dims.y);
 
-    vec2 src = tc * sca;
+    tc *= sca;
+    tc *= rot;
+    vec2 src = tc;
 
+    float width = 2.0;
     vec2 tc4 = src;
     vec2 tc1 = src + vec2(0.0, -offs.t * width);
     vec2 tc3 = src + vec2(-offs.s * width, 0.0);
