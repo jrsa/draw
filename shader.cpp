@@ -11,12 +11,13 @@ void compile_info(const GLuint shader);
 void link_info(const GLuint shader);
 void load_shader(const GLuint shader, std::string fn);
 
+
 shader::shader(std::string filename) {
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
   GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-  load_shader(vs, filename + ".vs.glsl");
-  load_shader(fs, filename + ".fs.glsl");
+  load_shader(vs, dir + filename + ".vs.glsl");
+  load_shader(fs, dir + filename + ".fs.glsl");
 
   glCompileShader(vs);
   compile_info(vs);
@@ -67,6 +68,12 @@ void shader::u2f(std::string name, glm::vec2 value) {
   use();
   GLint u = glGetUniformLocation(_program, name.c_str());
   glUniform2f(u, value.x, value.y);
+}
+
+std::string shader::dir;
+
+void shader::setdir(std::string d) {
+  dir = d;
 }
 
 void compile_info(const GLuint shader) {

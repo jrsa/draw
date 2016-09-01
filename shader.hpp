@@ -9,6 +9,7 @@ using namespace gl;
 class shader {
 private:
   GLuint _program;
+  static std::string dir;
 
 public:
   shader(std::string filename);
@@ -18,6 +19,8 @@ public:
   void use();
   void u1f(std::string, float);
   void u2f(std::string, glm::vec2);
+
+  static void setdir(std::string);
 };
 
 #endif
