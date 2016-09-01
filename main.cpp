@@ -15,26 +15,21 @@ shader* source = nullptr;
 shader* dest = nullptr;
 fbo* filt = nullptr; fbo* filt2 = nullptr;
 
-void keycb(GLFWwindow *window, int key, int, int, int) {
-  switch (key) {
-  case 'R': {
-    LOG(INFO) << "reloading shader(s)";
-    source = new shader(SRC_FN);
-    dest = new shader(DEST_FN);
-    break;
-  }
-    case 'S': {
-      filt2->bind();
-      source->use();
-      bb->draw();
-    }
-  default: { break; }
-  }
+void seed() {
+  filt2->bind();
+  source->use();
+  source->u1f("scale", 5.0); // domain scale of noise function
+  bb->draw();
+}
+
+void allocate_fbos(int w, int h) {
+  filt = new fbo(h, w);
+  filt2 = new fbo(h, w);
 }
 
 int main(int argc, char **argv) {
 
-  auto setup_proc = [&] {
+  auto setup_proc = [] {
     glbinding::Binding::initialize(false);
 
     // TODO: really fucking need another way to not use pointers,
@@ -44,23 +39,13 @@ int main(int argc, char **argv) {
     bb = new billboard();
     source = new shader(SRC_FN);
     dest = new shader(DEST_FN);
-    filt = new fbo(1280, 960);
-    filt2 = new fbo(1280, 960);
 
-    // seed
-    filt2->bind();
-    source->use();
-    bb->draw();
-
-    dest->u1f("amp", 9.0);
-    dest->u1f("width", 3.0);
-    dest->u1f("scaleCoef", 0.1);
-
-    dest->u2f("dims", glm::vec2(1280, 960));
+    glViewport(0, 0, 640*2, 480*2);
+    allocate_fbos(640, 480);
+    dest->u2f("dims", glm::vec2(640*2, 480*2));
   };
 
   auto draw_proc = [&] {
-//    gl::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
     dest->use();
 
@@ -78,13 +63,30 @@ int main(int argc, char **argv) {
 
   glfw_app gltest(draw_proc, setup_proc);
 
-  gltest.set_key_proc(keycb);
+  gltest.set_key_proc([](GLFWwindow *window, int k, int, int a, int) {
+    if(a == GLFW_PRESS) {
+      switch (k) {
+        case 'R': {
+          LOG(INFO) << "reloading shader(s)";
+          source = new shader(SRC_FN);
+          dest = new shader(DEST_FN);
+//          dest->u2f("dims", glm::vec2(width, height));
+          break;
+        }
+        case 'S': {
+          seed();
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  });
 
   gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
     LOG(WARNING) << "changed window size";
     glViewport(0, 0, width, height);
-    filt = new fbo(height, width);
-    filt2 = new fbo(height, width);
+    allocate_fbos(width, height);
     dest->u2f("dims", glm::vec2(width, height));
   });
 
