@@ -13,6 +13,7 @@
 billboard* bb = nullptr;
 shader* source = nullptr;
 shader* dest = nullptr;
+shader* dest2 = nullptr;
 fbo* filt = nullptr; fbo* filt2 = nullptr;
 
 void seed() {
@@ -28,31 +29,31 @@ void allocate_fbos(int w, int h) {
 }
 
 int main(int argc, char **argv) {
+  shader::setdir("/Users/jrsa/code/gl/draw/glsl/");
 
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
 
-    // TODO: really fucking need another way to not use pointers,
-    // preferably explicit initialization of gl resources, or scoping
-    // the billboard in such a way that RAII can work to allocate them
-    // when the context is ready
     bb = new billboard();
-    source = new shader(SRC_FN);
-    dest = new shader(DEST_FN);
+    source = new shader("3");
+    dest = new shader("dest");
+    dest2 = new shader("dest2");
 
     glViewport(0, 0, 640*2, 480*2);
-    allocate_fbos(640, 480);
+    allocate_fbos(640*2, 480*2);
     dest->u2f("dims", glm::vec2(640*2, 480*2));
+    dest2->u2f("dims", glm::vec2(640*2, 480*2));
   };
 
   auto draw_proc = [&] {
     glActiveTexture(GL_TEXTURE0);
-    dest->use();
 
+    dest2->use();
     filt2->bind_tex();
     filt->bind();
     bb->draw();
 
+    dest->use();
     filt->bind_tex();
     filt2->bind();
     bb->draw();
@@ -68,8 +69,9 @@ int main(int argc, char **argv) {
       switch (k) {
         case 'R': {
           LOG(INFO) << "reloading shader(s)";
-          source = new shader(SRC_FN);
-          dest = new shader(DEST_FN);
+          source = new shader("3");
+          dest = new shader("dest");
+          dest2 = new shader("dest2");
 //          dest->u2f("dims", glm::vec2(width, height));
           break;
         }
@@ -88,6 +90,7 @@ int main(int argc, char **argv) {
     glViewport(0, 0, width, height);
     allocate_fbos(width, height);
     dest->u2f("dims", glm::vec2(width, height));
+    dest2->u2f("dims", glm::vec2(width, height));
   });
 
   gltest.run();
