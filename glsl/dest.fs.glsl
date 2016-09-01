@@ -55,7 +55,9 @@ void main() {
     vec4 col7 = texture(shampler, tc7);
     vec4 col8 = texture(shampler, tc8);
 
-    // something like a gaussian kernel
-    color = (2.0 * col0 + 1.0 * col1 + 2.0 * col2 + 1.0 * col3 + 4.0 * col4 + 1.0 * col5 + 2.0 * col6 + 1.0 * col7 + 2.0 * col8) / 9.0;
+    // pass transformed pixel out with no convolution
+//    color = col4;
 
+//    color = col4 + col1 + col3 + col5 + col7 * 0.196;
+    color = col4 * 5.0 - (col1 + col3 + col5 + col7);
 }
