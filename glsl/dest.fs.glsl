@@ -20,6 +20,15 @@ vec3 rgb2hsv(vec3 c) {
     return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
+
+vec3 hsv2rgb(vec3 color) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(color.xxx + K.xyz) * 6.0 - K.www);
+    vec3 rgb = vec3(color.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), color.y));
+
+    return rgb;
+}
+
 void main() {
     vec2 tc = pos.st;
     tc *= mat2(0.5, 0.0, 0.0, 0.5);
@@ -29,9 +38,9 @@ void main() {
 
     vec3 s = rgb2hsv(pixel);
 
-    mat2 sca = mat2(1. + (-s.r*0.005), 0., 0., 1. + (s.g*0.005));
+    mat2 sca = mat2(1.- (s.r*1.05), 0., 0., 1. - (s.r*1.05));
 
-    float angle = 0.2 * s.r;
+    float angle = 0.005 * s.b;
 	mat2 rot = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));
     vec2 offs = vec2(1. / dims.x, 1. / dims.y);
 
@@ -39,7 +48,7 @@ void main() {
     tc *= rot;
     vec2 src = tc;
 
-    float width = 2.0;
+    float width = 1.980;
     vec2 tc4 = src;
     vec2 tc1 = src + vec2(0.0, -offs.t * width);
     vec2 tc3 = src + vec2(-offs.s * width, 0.0);
@@ -63,7 +72,13 @@ void main() {
 
     // pass transformed pixel out with no convolution
 //    color = col4;
+    //s.r+=0.003;
 
-//    color = col4 + col1 + col3 + col5 + col7 * 0.196;
-    color = col4 * 5.0 - (col1 + col3 + col5 + col7);
+    float d = dot(pos, vec4(s, 0.0));
+//
+    s.s += (d * 0.2);
+    s.r -= (d * 0.2);
+//    color = vec4(hsv2rgb(s), 1.0);
+//    color = col2 + col4 + col6 + col8 + col0 * 0.1;
+    color = vec4(hsv2rgb(s), 1.0) * (3.0*d) - (col1 + col3 + col5 + col7);
 }
