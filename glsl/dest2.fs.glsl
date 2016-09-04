@@ -40,8 +40,11 @@ void main() {
     vec4 col8 = texture(shampler, tc8);
 
     // pass transformed pixel out with no convolution
-//    color = col4;
+    color = col4;
 
-    color = (col4 + col1 + col3 + col5 + col7) * 0.2;
+    // box blur
+//    color = (col4 + col1 + col3 + col5 + col7) * 0.2;
+
+    // box sharp
 //    color = col4 * 4.1 - (col1 + col3 + col5 + col7);
 }

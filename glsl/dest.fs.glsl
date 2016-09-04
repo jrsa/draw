@@ -48,7 +48,7 @@ void main() {
     tc *= rot;
     vec2 src = tc;
 
-    float width = 1.980;
+    float width = 2.980;
     vec2 tc4 = src;
     vec2 tc1 = src + vec2(0.0, -offs.t * width);
     vec2 tc3 = src + vec2(-offs.s * width, 0.0);
@@ -72,13 +72,10 @@ void main() {
 
     // pass transformed pixel out with no convolution
 //    color = col4;
-    //s.r+=0.003;
-
-    float d = dot(pos, vec4(s, 0.0));
-//
-    s.s += (d * 0.2);
-    s.r -= (d * 0.2);
-//    color = vec4(hsv2rgb(s), 1.0);
-//    color = col2 + col4 + col6 + col8 + col0 * 0.1;
-    color = vec4(hsv2rgb(s), 1.0) * (3.0*d) - (col1 + col3 + col5 + col7);
+    s.r+=0.003;
+    s.s-=dot(pos, vec4(s, 1.0));
+    s.r-=dot(pos, vec4(s, 1.0));
+    color = vec4(hsv2rgb(s), 1.0);
+//    color = col2 + col4 + col6 + col8 + col0 * 0.2;
+//    color = col4 * 4.0 - (col1 + col3 + col5 + col7);
 }
