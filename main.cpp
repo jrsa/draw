@@ -1,6 +1,8 @@
 #include <glbinding/Binding.h>
 #include <glog/logging.h>
 
+#include <rtaudio/RtAudio.h>
+
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
 #include "billboard.hpp"
@@ -16,6 +18,12 @@ shader* dest = nullptr;
 shader* dest2 = nullptr;
 fbo* filt = nullptr; fbo* filt2 = nullptr;
 
+int h = 0, w = 0;
+
+RtAudio audiosrc;
+signed short *inbuffer = nullptr;
+GLuint audiosrc_tex;
+
 void seed() {
   filt2->bind();
   source->use();
@@ -28,7 +36,29 @@ void allocate_fbos(int w, int h) {
   filt2 = new fbo(h, w);
 }
 
+int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+            double streamTime, RtAudioStreamStatus status, void *userData ) {
+//  glBindTexture(GL_TEXTURE_1D, audiosrc_tex);
+//  glTexImage1D(GL_TEXTURE_1D, 0, (GLint)GL_R16, nBufferFrames, 0, GL_RED, GL_UNSIGNED_SHORT, inputBuffer);
+}
+
+
+void setup_audiosrc(RtAudio& src) {
+
+  LOG(INFO) << src.getDeviceCount() << " devices found";
+  unsigned int bufferFrames = 256;
+  RtAudio::StreamParameters parameters;
+  parameters.nChannels = 1;
+
+  inbuffer = new short[bufferFrames];
+
+  src.openStream( NULL, &parameters, RTAUDIO_SINT16, 44100, &bufferFrames, &record );
+  LOG(INFO) << "stream opened with vector size: " << bufferFrames;
+}
+
+
 int main(int argc, char **argv) {
+
   shader::setdir("/Users/jrsa/code/gl/draw/glsl/");
 
   auto setup_proc = [] {
@@ -39,10 +69,21 @@ int main(int argc, char **argv) {
     dest = new shader("dest");
     dest2 = new shader("dest2");
 
+    glGenTextures(1, &audiosrc_tex);
+
+    w = 640*2;
+    h = 480*2;
+
     glViewport(0, 0, 640*2, 480*2);
     allocate_fbos(640*2, 480*2);
     dest->u2f("dims", glm::vec2(640*2, 480*2));
     dest2->u2f("dims", glm::vec2(640*2, 480*2));
+
+    seed();
+
+    setup_audiosrc(audiosrc);
+
+//    audiosrc.startStream();
   };
 
   auto draw_proc = [&] {
@@ -72,7 +113,8 @@ int main(int argc, char **argv) {
           source = new shader("3");
           dest = new shader("dest");
           dest2 = new shader("dest2");
-//          dest->u2f("dims", glm::vec2(width, height));
+          dest->u2f("dims", glm::vec2(w, h));
+          dest2->u2f("dims", glm::vec2(w, h));
           break;
         }
         case 'S': {
@@ -91,6 +133,8 @@ int main(int argc, char **argv) {
     allocate_fbos(width, height);
     dest->u2f("dims", glm::vec2(width, height));
     dest2->u2f("dims", glm::vec2(width, height));
+    w= width;
+    h = height;
   });
 
   gltest.run();
