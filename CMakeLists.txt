@@ -41,7 +41,7 @@ set(sources
     shader.cpp
     billboard.cpp
     fbo.cpp
-    syphon_server.mm
+#    syphon_server.mm
     )
 
 add_executable(${target} ${sources} main.cpp)
