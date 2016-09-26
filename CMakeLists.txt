@@ -18,6 +18,7 @@ include_directories(
     ${GLFW3_INCLUDE_DIR}
     ${GLBINDING_INCLUDE_DIR}
     ${GLM_INCLUDE_DIR}
+    /usr/local/Cellar/stk/4.5.0/include/stk/
 )
 
 include_directories(
@@ -29,7 +30,9 @@ set(libs
     ${GLFW3_LIBRARY}
     ${GLBINDING_LIBRARY}
     ${GLOG_LIBRARY}
-    "/Library/Frameworks/Syphon.framework"
+    /opt/rtaudio/librtaudio.dylib
+    /usr/local/Cellar/stk/4.5.0/lib/libstk.a
+#    "/Library/Frameworks/Syphon.framework"
 )
 
 set(sources
