@@ -13,6 +13,7 @@ private:
 
 public:
   shader(std::string filename);
+  shader(std::string vs_fn, std::string fs_src);
   ~shader();
 
   GLuint program() { return _program; }
