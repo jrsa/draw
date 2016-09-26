@@ -9,9 +9,6 @@
 #include "shader.hpp"
 #include "fbo.h"
 
-#define SRC_FN "/Users/jrsa/code/gl/draw/glsl/3"
-#define DEST_FN "/Users/jrsa/code/gl/draw/glsl/dest"
-
 billboard* bb = nullptr;
 shader* source = nullptr;
 shader* dest = nullptr;
@@ -34,6 +31,13 @@ void seed() {
 void allocate_fbos(int w, int h) {
   filt = new fbo(h, w);
   filt2 = new fbo(h, w);
+}
+
+void load_shaders() {
+
+  source = new shader("passthru_pos" ,"3");
+  dest = new shader("passthru_pos", "dest");
+  dest2 = new shader("passthru_pos", "dest2");
 }
 
 int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
@@ -59,15 +63,13 @@ void setup_audiosrc(RtAudio& src) {
 
 int main(int argc, char **argv) {
 
-  shader::setdir("/Users/jrsa/code/gl/draw/glsl/");
+  shader::setdir("/Users/jrsa/code/gl/glsl/");
 
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
 
     bb = new billboard();
-    source = new shader("3");
-    dest = new shader("dest");
-    dest2 = new shader("dest2");
+    load_shaders();
 
     glGenTextures(1, &audiosrc_tex);
 
@@ -110,9 +112,7 @@ int main(int argc, char **argv) {
       switch (k) {
         case 'R': {
           LOG(INFO) << "reloading shader(s)";
-          source = new shader("3");
-          dest = new shader("dest");
-          dest2 = new shader("dest2");
+          load_shaders();
           dest->u2f("dims", glm::vec2(w, h));
           dest2->u2f("dims", glm::vec2(w, h));
           break;
