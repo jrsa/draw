@@ -41,6 +41,7 @@ set(sources
     shader.cpp
     billboard.cpp
     fbo.cpp
+    simple_file.cpp
 #    syphon_server.mm
     )
 

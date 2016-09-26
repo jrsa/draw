@@ -4,13 +4,37 @@
 #include <glog/logging.h>
 
 #include "shader.hpp"
+#include "simple_file.hpp"
 
 using namespace gl;
+using namespace simple_file;
 
 void compile_info(const GLuint shader);
 void link_info(const GLuint shader);
 void load_shader(const GLuint shader, std::string fn);
+void variable_info(const GLuint program);
 
+shader::shader(std::string vs_fn, std::string fs_fn) {
+  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+  const GLchar *const vs_src = read(dir + vs_fn + ".vs.glsl").c_str();
+  glShaderSource(vs, 1, &vs_src, nullptr);
+  glCompileShader(vs);
+  compile_info(vs);
+
+  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+  const GLchar *const fs_src = read(dir + fs_fn + ".fs.glsl").c_str();
+  glShaderSource(fs, 1, &fs_src, nullptr);
+  glCompileShader(fs);
+  compile_info(fs);
+
+  _program = glCreateProgram();
+  glAttachShader(_program, vs);
+  glAttachShader(_program, fs);
+  glLinkProgram(_program);
+  link_info(_program);
+
+  variable_info(_program);
+}
 
 shader::shader(std::string filename) {
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
@@ -32,26 +56,7 @@ shader::shader(std::string filename) {
   glLinkProgram(_program);
   link_info(_program);
 
-  GLint n_active_attr = 0;
-  GLint n_active_ufrm = 0;
-  GLint max_attr_namelength = 0;
-  glGetProgramiv(_program, GL_ACTIVE_ATTRIBUTES, &n_active_attr);
-  glGetProgramiv(_program, GL_ACTIVE_UNIFORMS, &n_active_ufrm);
-  glGetProgramiv(_program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH,
-                 &max_attr_namelength);
-
-  LOG(INFO) << n_active_attr << " attrs and " << n_active_ufrm << " ufrms";
-
-  std::vector<GLchar> nameData(max_attr_namelength);
-  for (int attr = 0; attr < n_active_attr; ++attr) {
-    GLint arraySize = 0;
-    GLenum type = GL_FLOAT;
-    GLsizei actualLength = 0;
-    glGetActiveAttrib(_program, attr, nameData.size(), &actualLength,
-                      &arraySize, &type, &nameData[0]);
-
-    LOG(INFO) << std::string((char *)&nameData[0], actualLength);
-  }
+  variable_info(_program);
 }
 
 shader::~shader() { glDeleteProgram(_program); }
@@ -126,4 +131,27 @@ void load_shader(const GLuint shader, std::string fn) {
   buf[sz] = '\0'; // ensure null terminator
   glShaderSource(shader, 1, &buf, NULL);
   delete[] buf;
+}
+
+void variable_info(const GLuint program) {
+  GLint n_active_attr = 0;
+  GLint n_active_ufrm = 0;
+  GLint max_attr_namelength = 0;
+  glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &n_active_attr);
+  glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &n_active_ufrm);
+  glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH,
+                 &max_attr_namelength);
+
+  LOG(INFO) << n_active_attr << " attrs and " << n_active_ufrm << " ufrms";
+
+  std::vector<GLchar> nameData(max_attr_namelength);
+  for (int attr = 0; attr < n_active_attr; ++attr) {
+    GLint arraySize = 0;
+    GLenum type = GL_FLOAT;
+    GLsizei actualLength = 0;
+    glGetActiveAttrib(program, attr, nameData.size(), &actualLength,
+                      &arraySize, &type, &nameData[0]);
+
+    LOG(INFO) << std::string((char *)&nameData[0], actualLength);
+  }
 }
