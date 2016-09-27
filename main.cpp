@@ -3,6 +3,9 @@
 
 #include <rtaudio/RtAudio.h>
 
+#include <lo/lo.h>
+#include <lo/lo_cpp.h>
+
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
 #include "billboard.hpp"
@@ -62,6 +65,17 @@ int main(int argc, char **argv) {
 
   shader::setdir("/Users/jrsa/code/gl/draw/glsl/");
 
+  lo::ServerThread oscin(6969);
+  DLOG_ASSERT(oscin.is_valid());
+
+  oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
+                           LOG(INFO) << "song " << pArg[0]->i;
+                         });
+
+  oscin.add_method("/chords", "i", [] (lo_arg **pArg, int) {
+                           LOG(INFO) << "chords "<< pArg[0]->i;
+                         });
+  oscin.start();
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
 
