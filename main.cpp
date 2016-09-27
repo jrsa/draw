@@ -40,19 +40,20 @@ int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
             double streamTime, RtAudioStreamStatus status, void *userData ) {
 //  glBindTexture(GL_TEXTURE_1D, audiosrc_tex);
 //  glTexImage1D(GL_TEXTURE_1D, 0, (GLint)GL_R16, nBufferFrames, 0, GL_RED, GL_UNSIGNED_SHORT, inputBuffer);
+  memccpy(inbuffer, inputBuffer, nBufferFrames, sizeof(short));
 }
 
 
 void setup_audiosrc(RtAudio& src) {
 
   LOG(INFO) << src.getDeviceCount() << " devices found";
-  unsigned int bufferFrames = 256;
+  unsigned int bufferFrames = 768;
   RtAudio::StreamParameters parameters;
   parameters.nChannels = 1;
 
   inbuffer = new short[bufferFrames];
 
-  src.openStream( NULL, &parameters, RTAUDIO_SINT16, 44100, &bufferFrames, &record );
+  src.openStream( NULL, &parameters, RTAUDIO_SINT16, 48000, &bufferFrames, &record );
   LOG(INFO) << "stream opened with vector size: " << bufferFrames;
 }
 
