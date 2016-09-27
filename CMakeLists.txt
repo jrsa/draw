@@ -19,6 +19,7 @@ include_directories(
     ${GLBINDING_INCLUDE_DIR}
     ${GLM_INCLUDE_DIR}
     /usr/local/Cellar/stk/4.5.0/include/stk/
+    /usr/local/Cellar/liblo/0.28/include/
 )
 
 include_directories(
@@ -33,6 +34,7 @@ set(libs
     /opt/rtaudio/librtaudio.dylib
     /usr/local/Cellar/stk/4.5.0/lib/libstk.a
 #    "/Library/Frameworks/Syphon.framework"
+    /usr/local/Cellar/liblo/0.28/lib/liblo.dylib
 )
 
 set(sources
