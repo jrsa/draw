@@ -20,6 +20,7 @@ include_directories(
     ${GLM_INCLUDE_DIR}
     /usr/local/Cellar/stk/4.5.0/include/stk/
     /usr/local/Cellar/liblo/0.28/include/
+    /Users/jrsa/src/max_oculus/src/LibOVR/Include
 )
 
 include_directories(
@@ -35,6 +36,9 @@ set(libs
     /usr/local/Cellar/stk/4.5.0/lib/libstk.a
 #    "/Library/Frameworks/Syphon.framework"
     /usr/local/Cellar/liblo/0.28/lib/liblo.dylib
+    /Users/jrsa/Downloads/OculusSDK/LibOVR/Lib/Mac/Debug/libovr.a
+    /System/Library/Frameworks/Cocoa.framework
+    /System/Library/Frameworks/IOKit.framework
 )
 
 set(sources
