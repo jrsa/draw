@@ -7,7 +7,7 @@
 #include <lo/lo_cpp.h>
 
 #include <OVR.h>
-#include <OVR_Version.h>
+#include "hmd_dist_mesh.h"
 
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
