@@ -21,8 +21,24 @@ shader* dest = nullptr;
 shader* dest2 = nullptr;
 fbo* filt = nullptr; fbo* filt2 = nullptr;
 
-int h = 0, w = 0;
+int h = 0, w = 0, frame_index = 0;
 
+// class rift
+ovrHmd rifthmd;
+shader* distortion = nullptr;
+
+// per eye
+ovrTexture eyes[ovrEye_Count];
+ovrEyeRenderDesc eye_render_desc[ovrEye_Count];
+ovrMatrix4f eye_proj[ovrEye_Count];          // Projection matrix for eye.
+ovrMatrix4f eye_ortho[ovrEye_Count];     // Projection for 2D.
+ovrPosef eye_render_pose[ovrEye_Count];       // Poses we used for rendering.
+ovrSizei eye_render_size[ovrEye_Count];       // Saved render eye sizes; base for dynamic sizing.
+GLuint eye_tex[ovrEye_Count];
+fbo* eye_dest[ovrEye_Count] = {nullptr};
+hmd_dist_mesh* eye_mesh[ovrEye_Count] = {nullptr};
+
+// class rtaudiosrc
 RtAudio audiosrc;
 signed short *inbuffer = nullptr;
 GLuint audiosrc_tex;
@@ -67,6 +83,33 @@ void setup_audiosrc(RtAudio& src) {
   LOG(INFO) << "stream opened with vector size: " << bufferFrames;
 }
 
+void setup_rift() {
+  DLOG_ASSERT(ovr_Initialize());
+  LOG(INFO) << "libovr " << ovr_GetVersionString() << " blud";
+  rifthmd = ovrHmd_Create(0);
+  DLOG_ASSERT(rifthmd);
+
+  ovrSizei tex_size[2];
+  ovrEyeRenderDesc render_desc[2];
+
+  // per eye config
+  for (int i = 0; i < ovrEye_Count; i++) {
+    ovrFovPort fov = rifthmd->DefaultEyeFov[i];
+    render_desc[i] = ovrHmd_GetRenderDesc(rifthmd, (ovrEyeType)i, fov);
+    tex_size[i] = ovrHmd_GetFovTextureSize(rifthmd, (ovrEyeType)i, fov, 1.0);
+
+    const ovrEyeType eye = rifthmd->EyeRenderOrder[i];
+    unsigned int distcaps = ovrDistortionCap_Chromatic
+                          | ovrDistortionCap_TimeWarp
+                          | ovrDistortionCap_Vignette;
+    eye_mesh[i] = new hmd_dist_mesh(rifthmd, (ovrEyeType)i, fov, distcaps);
+  }
+
+  // 2 textures or one?
+//  glGenTextures()
+
+}
+
 
 int main(int argc, char **argv) {
 
@@ -74,9 +117,6 @@ int main(int argc, char **argv) {
 
   lo::ServerThread oscin(6969);
   DLOG_ASSERT(oscin.is_valid());
-
-  DLOG_ASSERT(ovr_Initialize());
-  LOG(INFO) << "libovr " << OVR_VERSION_STRING << " blud";
 
   oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
                            LOG(INFO) << "song " << pArg[0]->i;
@@ -105,24 +145,35 @@ int main(int argc, char **argv) {
     seed();
 
     setup_audiosrc(audiosrc);
-
+    setup_rift();
 //    audiosrc.startStream();
   };
 
   auto draw_proc = [&] {
+
+    // iterate feedback loop between "filt" and "filt2" prototypes
     glActiveTexture(GL_TEXTURE0);
 
+    // draw filt2's contents to filt with shader applied
     dest2->use();
     filt2->bind_tex();
     filt->bind();
     bb->draw();
 
+    // the inverse (filt to filt2)
     dest->use();
     filt->bind_tex();
     filt2->bind();
     bb->draw();
 
     fbo::unbind_all();
+
+//    ovrTrackingState hmdstate;
+//    ovrVector3f hmd2eyeview_offset[2] = { eye_render_desc[0].HmdToEyeViewOffset
+//                                        , eye_render_desc[1].HmdToEyeViewOffset };
+//    ovrHmd_GetEyePoses(rifthmd, 0, hmd2eyeview_offset, eye_render_pose, &hmdstate);
+
+    // draws "filt" fbo contents to eyes
     bb->draw();
   };
 
@@ -159,5 +210,8 @@ int main(int argc, char **argv) {
   });
 
   gltest.run();
+
+  ovrHmd_Destroy(rifthmd);
+  ovr_Shutdown();
   return 0;
 }
