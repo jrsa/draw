@@ -6,6 +6,9 @@
 #include <lo/lo.h>
 #include <lo/lo_cpp.h>
 
+#include <OVR.h>
+#include <OVR_Version.h>
+
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
 #include "billboard.hpp"
@@ -71,6 +74,9 @@ int main(int argc, char **argv) {
 
   lo::ServerThread oscin(6969);
   DLOG_ASSERT(oscin.is_valid());
+
+  DLOG_ASSERT(ovr_Initialize());
+  LOG(INFO) << "libovr " << OVR_VERSION_STRING << " blud";
 
   oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
                            LOG(INFO) << "song " << pArg[0]->i;
