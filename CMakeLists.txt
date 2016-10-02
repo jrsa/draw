@@ -20,7 +20,7 @@ include_directories(
     ${GLM_INCLUDE_DIR}
     /usr/local/Cellar/stk/4.5.0/include/stk/
     /usr/local/Cellar/liblo/0.28/include/
-    /Users/jrsa/src/max_oculus/src/LibOVR/Include
+    /Users/jrsa/Downloads/OculusSDK/LibOVR/Include
 )
 
 include_directories(
@@ -49,7 +49,7 @@ set(sources
     fbo.cpp
     simple_file.cpp
 #    syphon_server.mm
-        hmd_dist_mesh.cpp hmd_dist_mesh.h)
+        hmd_dist_mesh.cpp hmd_dist_mesh.h rift_in_action.h)
 
 add_executable(${target} ${sources} main.cpp)
 target_link_libraries(${target} ${libs})
@@ -63,3 +63,8 @@ set_target_properties(${target}
     LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
     LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
     DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
+
+
+add_executable(meshtest glfw_app.cpp shader.cpp meshtest.cpp)
+target_link_libraries(meshtest ${libs})
+target_compile_options(meshtest PRIVATE ${DEFAULT_COMPILE_FLAGS})
