@@ -17,6 +17,10 @@ billboard::billboard() {
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glBindVertexArray(0);
 }
 
 billboard::~billboard() {
@@ -25,10 +29,7 @@ billboard::~billboard() {
 }
 
 void billboard::draw() {
-  glEnableVertexAttribArray(0);
+  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 5);
-  glDisableVertexAttribArray(0);
 }
