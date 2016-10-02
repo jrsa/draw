@@ -55,6 +55,12 @@ void shader::u2f(std::string name, glm::vec2 value) {
   glUniform2f(u, value.x, value.y);
 }
 
+void shader::u1i(std::string name, GLint value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform1i(u, value);
+}
+
 std::string shader::dir;
 
 void shader::setdir(std::string d) {
