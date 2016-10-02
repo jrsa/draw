@@ -20,6 +20,7 @@ public:
   void use();
   void u1f(std::string, float);
   void u2f(std::string, glm::vec2);
+  void u1i(std::string, GLint);
 
   static void setdir(std::string);
 };
