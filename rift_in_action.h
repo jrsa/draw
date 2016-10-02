@@ -86,6 +86,15 @@ namespace rift_in_action {
     return result;
   }
 
+  template <typename Function>
+  void for_each_eye(Function function) {
+    for (ovrEyeType eye = ovrEyeType::ovrEye_Left;
+         eye < ovrEyeType::ovrEye_Count;
+         eye = static_cast<ovrEyeType>(eye + 1)) {
+      function(eye);
+    }
+  }
+
 }
 
 
