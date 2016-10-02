@@ -87,7 +87,11 @@ void setup_rift() {
   DLOG_ASSERT(ovr_Initialize());
   LOG(INFO) << "libovr " << ovr_GetVersionString() << " blud";
   rifthmd = ovrHmd_Create(0);
-  DLOG_ASSERT(rifthmd);
+  //  DLOG_ASSERT(rifthmd);
+  if(!rifthmd) {
+    LOG(ERROR) << "running without hmd, creating virtual DK1";
+    rifthmd = ovrHmd_CreateDebug(ovrHmd_DK1);
+  }
 
   ovrSizei tex_size[2];
   ovrEyeRenderDesc render_desc[2];
