@@ -48,6 +48,8 @@ shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fb
 }
 
 shader::shader(std::string filename, std::vector<std::string> fbv): shader(filename, filename, fbv) {}
+shader::shader(std::string filename): shader(filename, filename, {}) {}
+shader::shader(std::string vs_fn, std::string fs_fn): shader(vs_fn, fs_fn, {}) {}
 
 shader::~shader() { glDeleteProgram(_program); }
 
