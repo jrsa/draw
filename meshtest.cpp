@@ -29,6 +29,8 @@ struct eyedata {
   ovrEyeRenderDesc desc;
 };
 
+int ibo_n = 0;
+
 int main(int argc, char* argv[]) {
   shader::setdir("/Users/jrsa/code/gl/glsl/");
   shader* drawer = nullptr;
@@ -67,10 +69,44 @@ int main(int argc, char* argv[]) {
                               | ovrDistortionCap_TimeWarp
                               | ovrDistortionCap_Vignette;
 
-      ovrHmd_CreateDistortionMesh(rift, eyei, eye.fov, distcaps, &eye.mesh);
 
-      glGenVertexArrays(1, &eye.vao);
-      glBindVertexArray(eye.vao);
+    ovr_Initialize();
+    ovrHmd h = ovrHmd_CreateDebug(ovrHmd_DK1);
+
+    ovrSizei tex_size[2];
+    ovrEyeRenderDesc render_desc[2];
+    ovrDistortionMesh mesh[2];
+    glm::vec2 *positions[2] = {nullptr};
+
+    // per eye config
+    for (int i = 0; i < ovrEye_Count; i++) {
+      ovrFovPort fov = h->DefaultEyeFov[i];
+      render_desc[i] = ovrHmd_GetRenderDesc(h, (ovrEyeType)i, fov);
+      tex_size[i] = ovrHmd_GetFovTextureSize(h, (ovrEyeType)i, fov, 1.0);
+
+      const ovrEyeType eye = h->EyeRenderOrder[i];
+      unsigned int distcaps = ovrDistortionCap_Chromatic
+                              | ovrDistortionCap_TimeWarp
+                              | ovrDistortionCap_Vignette;
+
+      ovrHmd_CreateDistortionMesh(h, eye, fov, distcaps, &mesh[i]);
+      positions[i] = new glm::vec2[mesh[i].VertexCount];
+
+      for (int j = 0; j < mesh[i].VertexCount; ++j) {
+        positions[i][j] = rift_in_action::toGlm(mesh[i].pVertexData[j].ScreenPosNDC);
+      }
+    }
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vec2) * mesh[0].VertexCount, positions[0], GL_STATIC_DRAW);
+
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER
+      , sizeof(unsigned short) * mesh[0].IndexCount
+      , mesh[0].pIndexData
+      , GL_STATIC_DRAW);
+
 
       glGenBuffers(1, &eye.vbo);
       glBindBuffer(GL_ARRAY_BUFFER, eye.vbo);
@@ -98,6 +134,9 @@ int main(int argc, char* argv[]) {
 
     });
 
+    drawer = new shader("passthru", "passthru_red");
+
+    ibo_n = mesh[0].IndexCount;
   };
 
   auto draw_proc = [&] {
@@ -108,15 +147,9 @@ int main(int argc, char* argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     drawer->use();
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, ibo_n, GL_UNSIGNED_SHORT, 0);
 
-    eyedata eye = eyes[0];
-
-//    glDrawElements(GL_TRIANGLES, eye.mesh.IndexCount, GL_UNSIGNED_SHORT, nullptr);
-    glDrawArrays(GL_TRIANGLES, 0, eye.mesh.VertexCount);
-
-    glEnable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
   };
 
   glfw_app gltest(draw_proc, setup_proc);
