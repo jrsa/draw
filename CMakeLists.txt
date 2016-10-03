@@ -45,7 +45,8 @@ set(sources
     fbo.cpp
     simple_file.cpp
 #    syphon_server.mm
-    )
+    particle_buffer.cpp
+    particle_buffer.h )
 
 add_executable(${target} ${sources} main.cpp)
 target_link_libraries(${target} ${libs})
@@ -59,3 +60,24 @@ set_target_properties(${target}
     LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
     LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
     DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
+
+set(target xformfbtest)
+
+add_executable(${target}
+        xformfbtest.cpp
+        particle_buffer.cpp
+        shader.cpp
+        glfw_app.cpp
+        simple_file.cpp
+        )
+target_link_libraries(${target} ${libs})
+target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_FLAGS})
+set_target_properties(${target}
+        PROPERTIES
+        LINKER_LANGUAGE              CXX
+        FOLDER                      "${IDE_FOLDER}"
+        COMPILE_DEFINITIONS_DEBUG   "${DEFAULT_COMPILE_DEFS_DEBUG}"
+        COMPILE_DEFINITIONS_RELEASE "${DEFAULT_COMPILE_DEFS_RELEASE}"
+        LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
+        LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
+        DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
