@@ -16,14 +16,14 @@ void variable_info(const GLuint program);
 
 shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fbv) {
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  const GLchar *const vs_src = read(dir + vs_fn + ".vs.glsl").c_str();
-  glShaderSource(vs, 1, &vs_src, nullptr);
+  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+
+  load_shader(vs, dir + vs_fn + ".vs.glsl");
+  load_shader(fs, dir + fs_fn + ".fs.glsl");
+
   glCompileShader(vs);
   compile_info(vs);
 
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-  const GLchar *const fs_src = read(dir + fs_fn + ".fs.glsl").c_str();
-  glShaderSource(fs, 1, &fs_src, nullptr);
   glCompileShader(fs);
   compile_info(fs);
 
