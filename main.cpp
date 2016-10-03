@@ -38,9 +38,9 @@ void allocate_fbos(int w, int h) {
 
 void load_shaders() {
 
-  source = new shader("passthru_pos" ,"3");
-  dest = new shader("passthru_pos", "dest");
-  dest2 = new shader("passthru_pos", "dest2");
+  source = new shader("passthru_pos" ,"3", {});
+  dest = new shader("passthru_pos", "dest", {});
+  dest2 = new shader("passthru_pos", "dest2", {});
 }
 
 int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
