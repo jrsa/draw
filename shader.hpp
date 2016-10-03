@@ -2,6 +2,7 @@
 #define shader_h
 
 #include <string>
+#include <vector>
 #include "gl_shared.hpp"
 
 using namespace gl;
