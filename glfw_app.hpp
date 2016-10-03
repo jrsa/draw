@@ -16,6 +16,7 @@ public:
   void run();
   void set_key_proc(GLFWkeyfun);
   void set_fbsize_proc(GLFWframebuffersizefun);
+  void set_cursor_proc(GLFWcursorposfun);
   std::function<void()> draw_proc;
   std::function<void()> setup_proc;
 };
