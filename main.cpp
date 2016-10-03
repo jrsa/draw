@@ -62,55 +62,28 @@ void load_shaders() {
   dest2 = new shader("passthru_pos", "dest2", {});
 }
 
-int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-            double streamTime, RtAudioStreamStatus status, void *userData ) {
-//  glBindTexture(GL_TEXTURE_1D, audiosrc_tex);
-//  glTexImage1D(GL_TEXTURE_1D, 0, (GLint)GL_R16, nBufferFrames, 0, GL_RED, GL_UNSIGNED_SHORT, inputBuffer);
-  memccpy(inbuffer, inputBuffer, nBufferFrames, sizeof(short));
-}
+//int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+//            double streamTime, RtAudioStreamStatus status, void *userData ) {
+////  glBindTexture(GL_TEXTURE_1D, audiosrc_tex);
+////  glTexImage1D(GL_TEXTURE_1D, 0, (GLint)GL_R16, nBufferFrames, 0, GL_RED, GL_UNSIGNED_SHORT, inputBuffer);
+//  memccpy(inbuffer, inputBuffer, nBufferFrames, sizeof(short));
+//}
 
 
-void setup_audiosrc(RtAudio& src) {
-
-  LOG(INFO) << src.getDeviceCount() << " devices found";
-  unsigned int bufferFrames = 768;
-  RtAudio::StreamParameters parameters;
-  parameters.nChannels = 1;
-
-  inbuffer = new short[bufferFrames];
-
-  src.openStream( NULL, &parameters, RTAUDIO_SINT16, 48000, &bufferFrames, &record );
-  LOG(INFO) << "stream opened with vector size: " << bufferFrames;
-}
+//void setup_audiosrc(RtAudio& src) {
+//
+//  LOG(INFO) << src.getDeviceCount() << " devices found";
+//  unsigned int bufferFrames = 768;
+//  RtAudio::StreamParameters parameters;
+//  parameters.nChannels = 1;
+//
+//  inbuffer = new short[bufferFrames];
+//
+//  src.openStream( NULL, &parameters, RTAUDIO_SINT16, 48000, &bufferFrames, &record );
+//  LOG(INFO) << "stream opened with vector size: " << bufferFrames;
+//}
 
 void setup_rift() {
-  DLOG_ASSERT(ovr_Initialize());
-  LOG(INFO) << "libovr " << ovr_GetVersionString() << " blud";
-  rifthmd = ovrHmd_Create(0);
-  //  DLOG_ASSERT(rifthmd);
-  if(!rifthmd) {
-    LOG(ERROR) << "running without hmd, creating virtual DK1";
-    rifthmd = ovrHmd_CreateDebug(ovrHmd_DK1);
-  }
-
-  ovrSizei tex_size[2];
-  ovrEyeRenderDesc render_desc[2];
-
-  // per eye config
-  for (int i = 0; i < ovrEye_Count; i++) {
-    ovrFovPort fov = rifthmd->DefaultEyeFov[i];
-    render_desc[i] = ovrHmd_GetRenderDesc(rifthmd, (ovrEyeType)i, fov);
-    tex_size[i] = ovrHmd_GetFovTextureSize(rifthmd, (ovrEyeType)i, fov, 1.0);
-
-    const ovrEyeType eye = rifthmd->EyeRenderOrder[i];
-    unsigned int distcaps = ovrDistortionCap_Chromatic
-                          | ovrDistortionCap_TimeWarp
-                          | ovrDistortionCap_Vignette;
-    eye_mesh[i] = new hmd_dist_mesh(rifthmd, (ovrEyeType)i, fov, distcaps);
-  }
-
-  // 2 textures or one?
-//  glGenTextures()
 
 }
 
@@ -119,17 +92,6 @@ int main(int argc, char **argv) {
 
   shader::setdir("/Users/jrsa/code/gl/glsl/");
 
-//  lo::ServerThread oscin(6969);
-//  DLOG_ASSERT(oscin.is_valid());
-//
-//  oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
-//                           LOG(INFO) << "song " << pArg[0]->i;
-//                         });
-//
-//  oscin.add_method("/chords", "i", [] (lo_arg **pArg, int) {
-//                           LOG(INFO) << "chords "<< pArg[0]->i;
-//                         });
-//  oscin.start();
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
 
@@ -140,8 +102,8 @@ int main(int argc, char **argv) {
         LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error;
     });
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
+//    glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_BLEND);
 
     bb = new billboard();
     load_shaders();
@@ -159,7 +121,7 @@ int main(int argc, char **argv) {
     seed();
 
 //    setup_audiosrc(audiosrc);
-    setup_rift();
+//    setup_rift();
 //    audiosrc.startStream();
   };
 
@@ -225,7 +187,7 @@ int main(int argc, char **argv) {
 
   gltest.run();
 
-  ovrHmd_Destroy(rifthmd);
-  ovr_Shutdown();
+//  ovrHmd_Destroy(rifthmd);
+//  ovr_Shutdown();
   return 0;
 }
