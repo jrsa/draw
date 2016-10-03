@@ -57,9 +57,9 @@ void allocate_fbos(int w, int h) {
 
 void load_shaders() {
 
-  source = new shader("passthru_pos" ,"3");
-  dest = new shader("passthru_pos", "dest");
-  dest2 = new shader("passthru_pos", "dest2");
+  source = new shader("passthru_pos" ,"3", {});
+  dest = new shader("passthru_pos", "dest", {});
+  dest2 = new shader("passthru_pos", "dest2", {});
 }
 
 int record( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
@@ -119,24 +119,34 @@ int main(int argc, char **argv) {
 
   shader::setdir("/Users/jrsa/code/gl/glsl/");
 
-  lo::ServerThread oscin(6969);
-  DLOG_ASSERT(oscin.is_valid());
-
-  oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
-                           LOG(INFO) << "song " << pArg[0]->i;
-                         });
-
-  oscin.add_method("/chords", "i", [] (lo_arg **pArg, int) {
-                           LOG(INFO) << "chords "<< pArg[0]->i;
-                         });
-  oscin.start();
+//  lo::ServerThread oscin(6969);
+//  DLOG_ASSERT(oscin.is_valid());
+//
+//  oscin.add_method("/song", "i", [] (lo_arg **pArg, int) {
+//                           LOG(INFO) << "song " << pArg[0]->i;
+//                         });
+//
+//  oscin.add_method("/chords", "i", [] (lo_arg **pArg, int) {
+//                           LOG(INFO) << "chords "<< pArg[0]->i;
+//                         });
+//  oscin.start();
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
+
+    glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, {"glGetError"});
+    glbinding::setAfterCallback([](const glbinding::FunctionCall &call) {
+      const auto error = glGetError();
+      if (error != GL_NO_ERROR)
+        LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error;
+    });
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
 
     bb = new billboard();
     load_shaders();
 
-    glGenTextures(1, &audiosrc_tex);
+//    glGenTextures(1, &audiosrc_tex);
 
     w = 640*2;
     h = 480*2;
@@ -148,7 +158,7 @@ int main(int argc, char **argv) {
 
     seed();
 
-    setup_audiosrc(audiosrc);
+//    setup_audiosrc(audiosrc);
     setup_rift();
 //    audiosrc.startStream();
   };

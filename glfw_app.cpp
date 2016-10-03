@@ -9,8 +9,8 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
 
   glfwDefaultWindowHints();
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -40,4 +40,8 @@ void glfw_app::set_key_proc(GLFWkeyfun _kp) {
 
 void glfw_app::set_fbsize_proc(GLFWframebuffersizefun _p) {
   glfwSetFramebufferSizeCallback(_window, _p);
+}
+
+void glfw_app::set_cursor_proc(GLFWcursorposfun cbfun) {
+  glfwSetCursorPosCallback(_window, cbfun);
 }
