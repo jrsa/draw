@@ -14,7 +14,7 @@ void link_info(const GLuint shader);
 void load_shader(const GLuint shader, std::string fn);
 void variable_info(const GLuint program);
 
-shader::shader(std::string vs_fn, std::string fs_fn) {
+shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fbv) {
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
   GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -28,16 +28,28 @@ shader::shader(std::string vs_fn, std::string fs_fn) {
   compile_info(fs);
 
   _program = glCreateProgram();
-
   glAttachShader(_program, vs);
   glAttachShader(_program, fs);
+
+  if(fbv.size()) {
+    std::vector<const GLchar*> varyings;
+    for (std::vector<std::string>::iterator i = fbv.begin();
+         i != fbv.end();
+         ++i) {
+      varyings.push_back(i->c_str());
+    }
+    glTransformFeedbackVaryings(_program, 2, &varyings[0], GL_INTERLEAVED_ATTRIBS);
+  }
+
   glLinkProgram(_program);
   link_info(_program);
 
   variable_info(_program);
 }
 
-shader::shader(std::string filename): shader(filename, filename) { }
+shader::shader(std::string filename, std::vector<std::string> fbv): shader(filename, filename, fbv) {}
+shader::shader(std::string filename): shader(filename, filename, {}) {}
+shader::shader(std::string vs_fn, std::string fs_fn): shader(vs_fn, fs_fn, {}) {}
 
 shader::~shader() { glDeleteProgram(_program); }
 
@@ -53,6 +65,12 @@ void shader::u2f(std::string name, glm::vec2 value) {
   use();
   GLint u = glGetUniformLocation(_program, name.c_str());
   glUniform2f(u, value.x, value.y);
+}
+
+void shader::u1i(std::string name, GLint value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform1i(u, value);
 }
 
 std::string shader::dir;
