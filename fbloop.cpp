@@ -25,15 +25,21 @@ void seed() {
   bb->draw();
 }
 
+void seed_garbage(fbo* dest) {
+  fbo* junk_fbo = new fbo(690, 690);
+  dest->bind();
+  bb->draw();
+}
+
 void allocate_fbos(int w, int h) {
   filt = new fbo(h, w);
   filt2 = new fbo(h, w);
 }
 
 void load_shaders() {
-  source = new shader("passthru_pos" ,"3", {});
-  dest = new shader("passthru_pos", "sp3_dest", {});
-  dest2 = new shader("passthru_pos", "sp3_dest2", {});
+  source = new shader("passthru_pos" ,"abe_src", {});
+  dest = new shader("passthru_pos", "abe_dest", {});
+  dest2 = new shader("passthru_pos", "abe_dest2", {});
 }
 
 int main(int argc, char **argv) {
@@ -96,6 +102,10 @@ int main(int argc, char **argv) {
 
   gltest.set_key_proc([](GLFWwindow *window, int k, int, int a, int) {
     if(a == GLFW_PRESS) {
+      if(k >= 48 && k <= 57) {
+        int code = k - 48;
+        source->u1f("hue", k/10.0);
+      }
       switch (k) {
         case 'R': {
           LOG(INFO) << "reloading shader(s)";
@@ -106,6 +116,11 @@ int main(int argc, char **argv) {
         }
         case 'S': {
           seed();
+          break;
+        }
+        case 'G': {
+          seed_garbage(filt2);
+          break;
         }
         default: {
           break;
