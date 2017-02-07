@@ -19,6 +19,7 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   if (!_window) {
     LOG(FATAL) << "failed to create window";
   }
+  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 glfw_app::~glfw_app() { glfwTerminate(); }
