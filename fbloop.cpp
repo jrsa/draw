@@ -14,6 +14,7 @@ billboard* bb = nullptr;
 shader* source = nullptr;
 shader* dest = nullptr;
 shader* dest2 = nullptr;
+shader* warp = nullptr;
 fbo* filt = nullptr; fbo* filt2 = nullptr;
 
 int h = 0, w = 0, frame_index = 0;
@@ -38,8 +39,10 @@ void allocate_fbos(int w, int h) {
 
 void load_shaders() {
   source = new shader("passthru_pos" ,"abe_src", {});
-  dest = new shader("passthru_pos", "abe_dest", {});
-  dest2 = new shader("passthru_pos", "abe_dest2", {});
+  dest = new shader("passthru_pos", "sp3_dest", {});
+  dest2 = new shader("passthru_pos", "sp3_dest2", {});
+
+  warp = new shader("passthru_pos", "fisheye", {});
 }
 
 int main(int argc, char **argv) {
@@ -70,6 +73,8 @@ int main(int argc, char **argv) {
     dest->u2f("dims", glm::vec2(640*2, 480*2));
     dest2->u2f("dims", glm::vec2(640*2, 480*2));
 
+    warp->u2f("dims", glm::vec2(640*2, 480*2));
+
     seed();
   };
 
@@ -95,6 +100,7 @@ int main(int argc, char **argv) {
     fbo::unbind_all();
 
     // draws "filt" fbo contents to eyes
+    warp->use();
     bb->draw();
   };
 
@@ -112,6 +118,7 @@ int main(int argc, char **argv) {
           load_shaders();
           dest->u2f("dims", glm::vec2(w, h));
           dest2->u2f("dims", glm::vec2(w, h));
+          warp->u2f("dims", glm::vec2(w, h));
           break;
         }
         case 'S': {
@@ -135,6 +142,7 @@ int main(int argc, char **argv) {
     allocate_fbos(width, height);
     dest->u2f("dims", glm::vec2(width, height));
     dest2->u2f("dims", glm::vec2(width, height));
+    warp->u2f("dims", glm::vec2(width, height));
     w= width;
     h = height;
   });
