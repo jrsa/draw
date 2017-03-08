@@ -6,6 +6,7 @@ class shader;
 
 using namespace gl;
 
+// draws a quad covering the entire screen
 class billboard {
   GLuint vbo, vao, attrCoord;
 
