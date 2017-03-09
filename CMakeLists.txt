@@ -49,7 +49,8 @@ set(sources
     fbo.cpp
     simple_file.cpp
 #    syphon_server.mm
-        hmd_dist_mesh.cpp hmd_dist_mesh.h rift_in_action.h)
+    hmd_dist_mesh.cpp
+    particle_buffer.cpp)
 
 add_executable(${target} ${sources} main.cpp)
 target_link_libraries(${target} ${libs})

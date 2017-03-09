@@ -27,9 +27,12 @@ struct eyedata {
   GLuint vao = 0, vbo = 0, ebo = 0;
   ovrDistortionMesh mesh;
   ovrEyeRenderDesc desc;
-};
 
 int ibo_n = 0;
+
+
+  ovrSizei tex_size;
+};
 
 int main(int argc, char* argv[]) {
   shader::setdir("/Users/jrsa/code/gl/glsl/");
