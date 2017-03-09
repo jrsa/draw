@@ -75,7 +75,6 @@ add_executable(meshtest glfw_app.cpp shader.cpp meshtest.cpp)
 target_link_libraries(meshtest ${libs})
 target_compile_options(meshtest PRIVATE ${DEFAULT_COMPILE_FLAGS})
 
-<<<<<<< HEAD
 set(target xformfbtest)
 
 add_executable(${target}
