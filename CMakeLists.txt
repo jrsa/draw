@@ -122,3 +122,6 @@ set_target_properties(${target}
 add_executable(imptest imp.cpp)
 target_link_libraries(imptest ${libs})
 
+add_executable(conftest conf/read.cc)
+target_link_libraries(conftest /usr/local/lib/libyaml.a)
+
