@@ -1,5 +1,6 @@
 #include <glbinding/Binding.h>
 #include <glog/logging.h>
+#include <cstdlib> // for rand()
 
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
@@ -57,14 +58,17 @@ void seed_garbage(fbo* dest) {
   //
   // initialize an empty renderbuffer and draw its contents into `dest`
   //
-  fbo* junk_fbo = new fbo(690, 690);
+  fbo* junk_fbo = new fbo(rand() % 1000, rand() % 1000);
   dest->bind();
   bb->draw();
+  delete junk_fbo;
 }
 
 int main(int argc, char **argv) {
 
   shader::setdir("/Users/jrsa/code/gl/glsl/img/");
+
+  srand(0); // just like in the old days
 
   auto setup_proc = [] {
     glbinding::Binding::initialize(false);
@@ -77,7 +81,7 @@ int main(int argc, char **argv) {
     });
 
 //    glEnable(GL_DEPTH_TEST);
-//    glEnable(GL_BLEND);
+   glEnable(GL_BLEND);
 
     bb = new billboard();
     load_shaders();

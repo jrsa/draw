@@ -92,7 +92,7 @@ void compile_info(const GLuint shader) {
     GLchar *log = new GLchar[maxLength];
     glGetShaderInfoLog(shader, maxLength, &logLength, log);
 
-    LOG(FATAL) << "glsl compile error: " << log;
+    LOG(ERROR) << "glsl compile error: " << log;
   }
 }
 
@@ -109,7 +109,7 @@ void link_info(const GLuint program) {
     GLchar *log = new GLchar[maxLength];
     glGetProgramInfoLog(program, maxLength, &logLength, log);
 
-    LOG(FATAL) << "glsl link error: " << log;
+    LOG(ERROR) << "glsl link error: " << log;
   }
 }
 
