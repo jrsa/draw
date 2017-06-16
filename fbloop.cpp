@@ -35,14 +35,14 @@ void load_shaders() {
   //
 
   // source is used to seed the feedback loop
-  source = new shader("passthru_pos" ,"abe_src", {});
+  source = new shader("passthru_pos", "bat2src", {});
 
   // these two are used back and forth in the feedback loop
-  dest = new shader("passthru_pos", "4dest", {});
-  dest2 = new shader("passthru_pos", "4dest2", {});
+  dest = new shader("passthru_pos", "bat2dest", {});
+  dest2 = new shader("passthru_pos", "bat2dest2", {});
 
   // this program is used to adjust the output image post feedback
-  warp = new shader("passthru_pos", "colorshift", {});
+  warp = new shader("passthru_pos", "bat2post", {});
 }
 
 void seed() {
