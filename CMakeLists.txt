@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.3)
-set(target gltest)
 
 # hacks (should figure out how to do properly/why it doesnt work)
 set(GLFW3_DIR "/usr/local/lib/cmake/glfw/")
@@ -45,9 +44,7 @@ set(libs
     /System/Library/Frameworks/IOKit.framework
 )
 
-
 set(sources
-
     glfw_app.cpp
     shader.cpp
     billboard.cpp
@@ -55,21 +52,8 @@ set(sources
     simple_file.cpp
 #    syphon_server.mm
     hmd_dist_mesh.cpp
-    particle_buffer.cpp)
-
-add_executable(${target} ${sources} main.cpp)
-target_link_libraries(${target} ${libs})
-target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_FLAGS})
-set_target_properties(${target}
-    PROPERTIES
-    LINKER_LANGUAGE              CXX
-    FOLDER                      "${IDE_FOLDER}"
-    COMPILE_DEFINITIONS_DEBUG   "${DEFAULT_COMPILE_DEFS_DEBUG}"
-    COMPILE_DEFINITIONS_RELEASE "${DEFAULT_COMPILE_DEFS_RELEASE}"
-    LINK_FLAGS_DEBUG            "${DEFAULT_LINKER_FLAGS_DEBUG}"
-    LINK_FLAGS_RELEASE          "${DEFAULT_LINKER_FLAGS_RELEASE}"
-    DEBUG_POSTFIX               "d${DEBUG_POSTFIX}")
-
+    particle_buffer.cpp
+)
 
 add_executable(meshtest glfw_app.cpp shader.cpp meshtest.cpp)
 target_link_libraries(meshtest ${libs})
