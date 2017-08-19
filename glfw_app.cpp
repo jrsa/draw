@@ -1,3 +1,6 @@
+#include <sstream>
+#include <iomanip>
+
 #include <glog/logging.h>
 #include "glfw_app.hpp"
 
@@ -26,9 +29,27 @@ glfw_app::~glfw_app() { glfwTerminate(); }
 
 void glfw_app::run() {
 
+  int frames = 0;
+  double t, l = 0.0;
+
+  std::stringstream title;
+
   glfwMakeContextCurrent(_window);
   setup_proc();
   while (!glfwWindowShouldClose(_window)) {
+    frames++;
+    
+    t = glfwGetTime();
+
+    if(t - l >= 1.0) {
+      title.str("");
+      title << std::setprecision(4) << frames/t << " fps";
+      glfwSetWindowTitle(_window, title.str().c_str());
+      l = t;
+      // frames = 0;
+      // t = 0.0;
+    }
+
     draw_proc();
     glfwSwapBuffers(_window);
     glfwPollEvents();
