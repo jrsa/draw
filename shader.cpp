@@ -114,6 +114,7 @@ void link_info(const GLuint program) {
 }
 
 void load_shader(const GLuint shader, std::string fn) {
+  LOG(INFO) << "loading shader from file: " << fn;
   std::ifstream srcfile(fn, std::ios::in | std::ios::binary);
 
   if (!srcfile.is_open()) {
