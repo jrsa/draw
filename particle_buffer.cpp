@@ -66,4 +66,5 @@ void particle_buffer::draw() {
 
 void particle_buffer::seed() {
 
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vert) * area, orig_points, GL_STREAM_DRAW);
 }
