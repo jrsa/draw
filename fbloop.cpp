@@ -2,11 +2,14 @@
 #include <glog/logging.h>
 #include <cstdlib> // for rand()
 
+#include "billboard.hpp"
+#include "fbo.h"
 #include "gl_shared.hpp"
 #include "glfw_app.hpp"
-#include "billboard.hpp"
+#include "scene.hpp"
 #include "shader.hpp"
-#include "fbo.h"
+
+scene scn;
 
 billboard* bb = nullptr;
 shader* source = nullptr;
@@ -29,20 +32,15 @@ void allocate_fbos(int w, int h) {
   filt2 = new fbo(h, w);
 }
 
+void load(scene s) {
+  source =  new shader(s.src);
+  dest =    new shader(s.front);
+  dest2 =   new shader(s.back);
+  warp =    new shader(s.post);
+}
+
 void load_shaders() {
-  //
-  // (re)load and (re)compile shader programs from disk
-  //
-
-  // source is used to seed the feedback loop
-  source = new shader("passthru_pos", "bat2src", {});
-
-  // these two are used back and forth in the feedback loop
-  dest = new shader("passthru_pos", "bat2dest", {});
-  dest2 = new shader("passthru_pos", "bat2dest2", {});
-
-  // this program is used to adjust the output image post feedback
-  warp = new shader("passthru_pos", "bat2post", {});
+  load(scn);
 }
 
 void seed() {
@@ -70,7 +68,30 @@ int main(int argc, char **argv) {
 
   srand(0); // just like in the old days
 
-  auto setup_proc = [] {
+  std::string default_vs ("passthru_pos");
+  std::string back_fs ("boxblur");
+  std::string src_fs ("simple_src");
+  std::string post_fs ("simple_post");
+
+  std::string front_fs;
+
+  if (argc >= 2) {
+    front_fs = argv[1];
+  } else {
+    LOG(FATAL) << "specify fragment shader name as argument";
+  }
+
+  if (argc >= 3) {
+    back_fs = argv[2];
+  }
+
+  scn.src = std::make_pair(default_vs, src_fs);
+  scn.back = std::make_pair(default_vs, back_fs);
+  scn.post = std::make_pair(default_vs, post_fs);
+
+  scn.front = std::make_pair(default_vs, front_fs);
+
+  auto setup_proc = [&] {
     glbinding::Binding::initialize(false);
 
     glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, {"glGetError"});
@@ -84,17 +105,19 @@ int main(int argc, char **argv) {
    glEnable(GL_BLEND);
 
     bb = new billboard();
-    load_shaders();
+    // load_shaders();
+    load(scn);
 
-    w = 640*2;
-    h = 480*2;
+    int width = 640;
+    int height = 480;
 
-    glViewport(0, 0, 640*2, 480*2);
-    allocate_fbos(640*2, 480*2);
-    dest->u2f("dims", glm::vec2(640*2, 480*2));
-    dest2->u2f("dims", glm::vec2(640*2, 480*2));
-
-    warp->u2f("dims", glm::vec2(640*2, 480*2));
+    glViewport(0, 0, width, height);
+    allocate_fbos(width, height);
+    dest->u2f("dims", glm::vec2(width, height));
+    dest2->u2f("dims", glm::vec2(width, height));
+    warp->u2f("dims", glm::vec2(width, height));
+    w= width;
+    h = height;
 
     seed();
   };
