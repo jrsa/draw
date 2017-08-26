@@ -62,12 +62,12 @@ target_compile_options(meshtest PRIVATE ${DEFAULT_COMPILE_FLAGS})
 set(target xformfbtest)
 
 add_executable(${target}
-        # xformfbtest.cpp
-        # particle_buffer.cpp
-        # shader.cpp
+        xformfbtest.cpp
+        particle_buffer.cpp
+        shader.cpp
         glfw_app.cpp
-        # simple_file.cpp
-        xformfbnew.cpp
+        simple_file.cpp
+        # xformfbnew.cpp
         )
 target_link_libraries(${target} ${libs})
 target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_FLAGS})
