@@ -35,7 +35,15 @@ int main(int argc, char **argv) {
     glEnable(GL_BLEND);
 
     load_shaders();
-    particle = new particle_buffer(atoi(argv[1]));
+
+    int n = 0;
+    if (argc >= 2) {
+      n = atoi(argv[1]);
+    } else {
+      n = 100;
+    }
+
+    particle = new particle_buffer(n);
   };
 
   auto draw_proc = [&] {
