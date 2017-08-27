@@ -15,6 +15,7 @@ particle_buffer* particle = nullptr;
 
 int h = 0, w = 0;
 float mouseX = 0, mouseY = 0;
+bool clear = false;
 
 void load_shaders() {
   particle_fb = new shader("xformfborig", "xformfborig", {"outPosition", "outVelocity"});
@@ -51,10 +52,9 @@ int main(int argc, char **argv) {
     float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_prev).count();
     t_prev = t_now;
 
-    // glActiveTexture(GL_TEXTURE0);
-    // glClearColor(0.0, 0., 0., .1);
-    // glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+    if (clear) { 
+      glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
+    }
     particle_fb->use();
     particle_fb->u1f("time", time);
     particle_fb->u2f("mousePos", glm::vec2(mouseX, mouseY));
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     if(a == GLFW_PRESS) {
       switch (k) {
         case 'C': {
-          glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
+          clear = !clear;
           break;
         }
         case 'R': {
