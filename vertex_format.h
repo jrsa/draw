@@ -5,7 +5,7 @@
 #ifndef PROJECT_VERTEX_FORMAT_H
 #define PROJECT_VERTEX_FORMAT_H
 
-#define GLM_COMPILER 0
+// #define GLM_COMPILER 0
 #include <glm/glm.hpp>
 
 struct vert {

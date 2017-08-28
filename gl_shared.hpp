@@ -3,7 +3,7 @@
 
 #include <glbinding/gl/gl.h>
 
-#define GLM_COMPILER 0
+// #define GLM_COMPILER 0
 #include <glm/glm.hpp>
 
 #endif
