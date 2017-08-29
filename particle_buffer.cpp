@@ -49,6 +49,9 @@ particle_buffer::particle_buffer(int field_width) {
 }
 
 void particle_buffer::draw() {
+  glBindVertexArray(vao);
+  glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, out_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, in_vbo);
   glBeginTransformFeedback(GL_POINTS);
   glDrawArrays(GL_POINTS, 0, area);
   glEndTransformFeedback();
@@ -65,6 +68,8 @@ void particle_buffer::draw() {
 }
 
 void particle_buffer::seed() {
-
+  glBindVertexArray(vao);
+  glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, out_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, in_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vert) * area, orig_points, GL_STREAM_DRAW);
 }

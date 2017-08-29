@@ -66,7 +66,9 @@ add_executable(${target}
         particle_buffer.cpp
         shader.cpp
         glfw_app.cpp
-        simple_file.cpp
+        billboard.cpp
+        fbo.cpp
+        # simple_file.cpp
         # xformfbnew.cpp
         )
 target_link_libraries(${target} ${libs})
