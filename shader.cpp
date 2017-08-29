@@ -4,10 +4,10 @@
 #include <glog/logging.h>
 
 #include "shader.hpp"
-#include "simple_file.hpp"
+// #include "simple_file.hpp"
 
 using namespace gl;
-using namespace simple_file;
+// using namespace simple_file;
 
 void compile_info(const GLuint shader);
 void link_info(const GLuint shader);
@@ -21,7 +21,10 @@ shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fb
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
   GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
+  LOG(INFO) << "loading: " << vs_fn;
   load_shader(vs, dir + vs_fn + ".vs.glsl");
+
+  LOG(INFO) << "loading: " << fs_fn;
   load_shader(fs, dir + fs_fn + ".fs.glsl");
 
   glCompileShader(vs);
@@ -50,7 +53,7 @@ shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fb
   _vname = vs_fn;
   _fname = fs_fn;
 
-  // variable_info(_program);
+  variable_info(_program);
 }
 
 shader::shader(std::string filename, std::vector<std::string> fbv): shader(filename, filename, fbv) {}
@@ -122,11 +125,10 @@ void link_info(const GLuint program) {
 }
 
 void load_shader(const GLuint shader, std::string fn) {
-  LOG(INFO) << "loading shader from file: " << fn;
   std::ifstream srcfile(fn, std::ios::in | std::ios::binary);
 
   if (!srcfile.is_open()) {
-    LOG(FATAL) << "couldn't open shader: " << fn;
+    LOG(FATAL) << "couldn't open: " << fn;
   }
   srcfile.seekg(0, std::ios::end);
   int sz = srcfile.tellg();
@@ -144,21 +146,30 @@ void variable_info(const GLuint program) {
   GLint n_active_attr = 0;
   GLint n_active_ufrm = 0;
   GLint max_attr_namelength = 0;
+  GLint max_ufrm_namelength = 0;
+
   glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &n_active_attr);
   glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &n_active_ufrm);
-  glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH,
-                 &max_attr_namelength);
 
-  LOG(INFO) << n_active_attr << " attrs and " << n_active_ufrm << " ufrms";
+  glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_attr_namelength);
+  glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_ufrm_namelength);
 
   std::vector<GLchar> nameData(max_attr_namelength);
   for (int attr = 0; attr < n_active_attr; ++attr) {
     GLint arraySize = 0;
     GLenum type = GL_FLOAT;
     GLsizei actualLength = 0;
-    glGetActiveAttrib(program, attr, nameData.size(), &actualLength,
-                      &arraySize, &type, &nameData[0]);
+    glGetActiveAttrib(program, attr, nameData.size(), &actualLength, &arraySize, &type, &nameData[0]);
 
-    LOG(INFO) << std::string((char *)&nameData[0], actualLength);
+    LOG(INFO) << "attr " << attr << ": " << std::string((char *)&nameData[0], actualLength);
+  }
+
+  nameData = std::vector<GLchar>(max_ufrm_namelength);
+  for (int ufrm = 0; ufrm < n_active_ufrm; ++ufrm) {
+    GLint arraySize = 0;
+    GLenum type = GL_FLOAT;
+    GLsizei actualLength = 0;
+    glGetActiveUniform(program, ufrm, nameData.size(), &actualLength, &arraySize, &type, &nameData[0]);
+    LOG(INFO) << "ufrm " << ufrm << ": " << std::string((char *)&nameData[0], actualLength);
   }
 }
