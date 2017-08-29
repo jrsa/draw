@@ -7,6 +7,8 @@
 #include "glfw_app.hpp"
 #include "shader.hpp"
 #include "particle_buffer.h"
+#include "billboard.hpp"
+#include "fbo.h"
 
 #include <cstdlib> // atoi?
 
@@ -14,15 +16,21 @@ shader* particle_fb = nullptr;
 particle_buffer* particle = nullptr;
 
 int h = 0, w = 0;
-float mouseX = 0, mouseY = 0;
 bool clear = false;
 
+std::string shader_fn;
+
+fbo* accum = nullptr;
+billboard* bb = nullptr;
+shader* slab_pass = nullptr;
+
 void load_shaders() {
-  particle_fb = new shader("xformfborig", "xformfborig", {"outPosition", "outVelocity"});
+  particle_fb = new shader(shader_fn, shader_fn, {"outPosition", "outVelocity"});
+  slab_pass = new shader("img/passthru");
 }
 
 int main(int argc, char **argv) {
-  shader::setdir("/Users/jrsa/code/gl/glsl/tfb/");
+  shader::setdir("/Users/jrsa/code/gl/glsl/");
   auto t_prev = std::chrono::high_resolution_clock::now();
 
   auto setup_proc = [&] {
@@ -35,14 +43,21 @@ int main(int argc, char **argv) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 
-    load_shaders();
-
     int n = 0;
     if (argc >= 2) {
       n = atoi(argv[1]);
     } else {
       n = 100;
     }
+
+    if (argc >= 3) {
+      shader_fn = argv[2];
+    }
+
+    load_shaders();
+
+    bb = new billboard();
+    accum = new fbo(h, w);
 
     particle = new particle_buffer(n);
   };
@@ -52,13 +67,24 @@ int main(int argc, char **argv) {
     float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_prev).count();
     t_prev = t_now;
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // draw particles into fbo
+    accum->bind();
+    // glViewport(0, 0, w, h);
     if (clear) { 
       glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
     }
     particle_fb->use();
     particle_fb->u1f("time", time);
-    particle_fb->u2f("mousePos", glm::vec2(mouseX, mouseY));
     particle->draw();
+
+    fbo::unbind_all();
+
+    // glViewport(0, 0, w, h);
+    accum->bind_tex();
+    slab_pass->use();
+    bb->draw();
   };
 
   glfw_app gltest(draw_proc, setup_proc);
@@ -83,10 +109,18 @@ int main(int argc, char **argv) {
       }
     }
   });
+
   gltest.set_cursor_proc([](GLFWwindow*,double x, double y){
-    mouseX = 1 / x;
-    mouseY = 1 / y;
+    particle_fb->u2f("mousePos", glm::vec2(1/x, 1/y));
   });
+
+  gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
+      w = width;
+      h = height;
+      glViewport(0, 0, w, h);
+      accum = new fbo(h, w);
+  });
+
   gltest.run();
   return 0;
 }
