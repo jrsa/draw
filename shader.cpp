@@ -94,16 +94,18 @@ void compile_info(const GLuint shader) {
   GLint status(0);
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
+  GLint maxLength(0);
+  GLint logLength(0);
+
+  glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+  GLchar *log = new GLchar[maxLength];
+  glGetShaderInfoLog(shader, maxLength, &logLength, log);
+
   if (1 != status) {
-    GLint maxLength(0);
-    GLint logLength(0);
-
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-    GLchar *log = new GLchar[maxLength];
-    glGetShaderInfoLog(shader, maxLength, &logLength, log);
-
     LOG(ERROR) << "glsl compile error: " << log;
+  } else if (maxLength) {
+    LOG(INFO) << log;
   }
 }
 
