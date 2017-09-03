@@ -1,11 +1,18 @@
-#include <sstream>
-#include <iomanip>
-
 #include <glog/logging.h>
-#include "glfw_app.hpp"
+
+#include <glbinding/Binding.h>
+#include <glbinding/Meta.h>
+#include <glbinding/ContextInfo.h>
+#include <glbinding/Version.h>
+
+#include <gl_shared.hpp>
+#include <iomanip>
+#include <sstream>
+
+#include <glfw_app.hpp>
 
 glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
-    : draw_proc(draw), setup_proc(setup) {
+    : _draw_proc(draw), _setup_proc(setup) {
   if (!glfwInit()) {
     LOG(FATAL) << "failed to initialize glfw";
   }
@@ -28,29 +35,24 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
 glfw_app::~glfw_app() { glfwTerminate(); }
 
 void glfw_app::run() {
-
-  int frames = 0;
-  double t, l = 0.0;
-
-  std::stringstream title;
-
   glfwMakeContextCurrent(_window);
-  setup_proc();
-  while (!glfwWindowShouldClose(_window)) {
-    frames++;
-    
-    t = glfwGetTime();
 
-    if(t - l >= 1.0) {
-      title.str("");
-      title << std::setprecision(4) << frames/t << " fps";
-      glfwSetWindowTitle(_window, title.str().c_str());
-      l = t;
-      // frames = 0;
-      // t = 0.0;
+  glbinding::Binding::initialize(false);
+  glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, { "glGetError" });
+  glbinding::setAfterCallback([](const glbinding::FunctionCall& call) {
+    const auto error = gl::glGetError();
+    if (error != gl::GL_NO_ERROR) {
+      LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error; 
     }
+  });
 
-    draw_proc();
+  LOG(INFO) << "OpenGL " << glbinding::ContextInfo::version()  
+            << ", " << glbinding::ContextInfo::renderer();
+
+  _setup_proc();
+  while (!glfwWindowShouldClose(_window)) {
+
+    _draw_proc();
     glfwSwapBuffers(_window);
     glfwPollEvents();
   }

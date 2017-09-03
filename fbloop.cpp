@@ -28,11 +28,29 @@ void allocate_fbos(int w, int h) {
   // 2 fbo's are used in feedback, with a different shader program being used in
   // each
   //
+  if(filt) {
+    delete filt;
+  }
+  if(filt2) {
+    delete filt2;
+  }
   filt = new fbo(h, w);
   filt2 = new fbo(h, w);
 }
 
 void load(scene s) {
+  if(source) {
+    delete source;
+  }
+  if (dest) {
+    delete dest;
+  }
+  if (dest2) {
+    delete dest2;
+  }
+  if (warp) {
+    delete warp;
+  }
   source =  new shader(s.src);
   dest =    new shader(s.front);
   dest2 =   new shader(s.back);
@@ -92,20 +110,8 @@ int main(int argc, char **argv) {
   scn.front = std::make_pair(default_vs, front_fs);
 
   auto setup_proc = [&] {
-    glbinding::Binding::initialize(false);
-
-    glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, {"glGetError"});
-    glbinding::setAfterCallback([](const glbinding::FunctionCall &call) {
-      const auto error = glGetError();
-      if (error != GL_NO_ERROR)
-        LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error;
-    });
-
-//    glEnable(GL_DEPTH_TEST);
-   glEnable(GL_BLEND);
 
     bb = new billboard();
-    // load_shaders();
     load(scn);
 
     int width = 640;
