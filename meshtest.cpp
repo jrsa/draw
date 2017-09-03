@@ -3,43 +3,38 @@
 #include <glbinding/Binding.h>
 #include <gl_shared.hpp>
 #include <glfw_app.hpp>
+#include <billboard.hpp>
+#include <fbo.h>
 #include <shader.hpp>
 
 #include <OVR.h>
 #include <rift_in_action.h>
 
-glm::vec2 test_geo[] = {
-  {-0.5f,  0.5f},
-  { 0.5f,  0.5f},
-  { 0.5f, -0.5f},
-  {-0.5f, -0.5f},
-};
+shader *dist = nullptr;
+shader* source = nullptr;
+shader* pass = nullptr;
 
-GLushort test_idxes[] = {
-  0, 1, 2,
-  2, 3, 0
-};
+void load_shaders() {
+  // test image slab
+  source = new shader("img/passthru_pos" ,"img/simple_src");
 
-int h = 0, w = 0;
+  // rift distortion
+  dist = new shader("vr/ovrdist", "vr/ovrdist");
 
-struct eyedata {
-  ovrFovPort fov;
-  GLuint vao = 0, vbo = 0, ebo = 0;
-  ovrDistortionMesh mesh;
-  ovrEyeRenderDesc desc;
+  // passthru
+  pass = new shader("img/passthru", "img/passthru");
+}
 
-int ibo_n = 0;
-
-
-  ovrSizei tex_size;
-};
-
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   shader::setdir("/Users/jrsa/code/gl/glsl/");
-  shader* drawer = nullptr;
+  fbo *slab = nullptr;
+  billboard *bb = nullptr;
 
-  ovrHmd rift;
-  eyedata eyes[2];
+  GLuint vao[2], vbo[2], ibo[2];
+  ovrSizei tex_size[2];
+  ovrEyeRenderDesc render_desc[2];
+  ovrDistortionMesh mesh[2];
+  glm::vec2 *positions[2] = {nullptr};
 
   auto setup_proc = [&] {
     glbinding::Binding::initialize(false);
@@ -47,50 +42,30 @@ int main(int argc, char* argv[]) {
     glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, {"glGetError"});
     glbinding::setAfterCallback([](const glbinding::FunctionCall &call) {
       const auto error = glGetError();
-      if (error != GL_NO_ERROR)
+      if (error != GL_NO_ERROR) {
         LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error;
+      }
     });
 
-    DLOG_ASSERT(ovr_Initialize());
-    LOG(INFO) << "libovr " << ovr_GetVersionString() << " blud";
-    rift = ovrHmd_Create(0);
-    if(!rift) {
-      LOG(ERROR) << "running without hmd, creating virtual DK1";
-      rift = ovrHmd_CreateDebug(ovrHmd_DK1);
-    }
 
-    drawer = new shader("passthru2d", "passthru_red");
+    // openGL element array meshes for each eye
+    glGenVertexArrays(2, vao);
+    glGenBuffers(2, vbo);
+    glGenBuffers(2, ibo);
 
-
-    rift_in_action::for_each_eye([&](ovrEyeType eyei) {
-      eyedata eye = eyes[eyei];
-      eye.fov = rift->DefaultEyeFov[eyei];
-
-      eye.desc = ovrHmd_GetRenderDesc(rift, eyei, eye.fov);
-
-      unsigned int distcaps = ovrDistortionCap_Chromatic
-                              | ovrDistortionCap_TimeWarp
-                              | ovrDistortionCap_Vignette;
-
-
+    // rift things
     ovr_Initialize();
     ovrHmd h = ovrHmd_CreateDebug(ovrHmd_DK1);
 
-    ovrSizei tex_size[2];
-    ovrEyeRenderDesc render_desc[2];
-    ovrDistortionMesh mesh[2];
-    glm::vec2 *positions[2] = {nullptr};
-
     // per eye config
     for (int i = 0; i < ovrEye_Count; i++) {
+      glBindVertexArray(vao[i]);
       ovrFovPort fov = h->DefaultEyeFov[i];
       render_desc[i] = ovrHmd_GetRenderDesc(h, (ovrEyeType)i, fov);
       tex_size[i] = ovrHmd_GetFovTextureSize(h, (ovrEyeType)i, fov, 1.0);
 
       const ovrEyeType eye = h->EyeRenderOrder[i];
-      unsigned int distcaps = ovrDistortionCap_Chromatic
-                              | ovrDistortionCap_TimeWarp
-                              | ovrDistortionCap_Vignette;
+      unsigned int distcaps = ovrDistortionCap_Chromatic | ovrDistortionCap_TimeWarp | ovrDistortionCap_Vignette;
 
       ovrHmd_CreateDistortionMesh(h, eye, fov, distcaps, &mesh[i]);
       positions[i] = new glm::vec2[mesh[i].VertexCount];
@@ -98,68 +73,73 @@ int main(int argc, char* argv[]) {
       for (int j = 0; j < mesh[i].VertexCount; ++j) {
         positions[i][j] = rift_in_action::toGlm(mesh[i].pVertexData[j].ScreenPosNDC);
       }
+
+      glBindBuffer(GL_ARRAY_BUFFER, vbo[i]);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(vec2) * mesh[i].VertexCount, mesh[i].pVertexData, GL_STATIC_DRAW);
+
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo[i]);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * mesh[i].IndexCount, mesh[i].pIndexData, GL_STATIC_DRAW);
+
+      glEnableVertexAttribArray(0); // hardcoded in ovrdist.vs.glsl
+
+      // specify tightly packed vec2s for position
+      glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+      glBindVertexArray(0);
     }
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vec2) * mesh[0].VertexCount, positions[0], GL_STATIC_DRAW);
 
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER
-      , sizeof(unsigned short) * mesh[0].IndexCount
-      , mesh[0].pIndexData
-      , GL_STATIC_DRAW);
-
-
-      glGenBuffers(1, &eye.vbo);
-      glBindBuffer(GL_ARRAY_BUFFER, eye.vbo);
-      glBufferData(GL_ARRAY_BUFFER
-        , sizeof(ovrDistortionVertex) * eye.mesh.VertexCount
-        , eye.mesh.pVertexData
-        , GL_STATIC_DRAW);
-
-      glGenBuffers(1, &eye.ebo);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eye.ebo);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER
-        , sizeof(unsigned short) * eye.mesh.IndexCount
-        , eye.mesh.pIndexData
-        , GL_STATIC_DRAW);
-
-      GLsizei stride = sizeof(ovrDistortionVertex);
-      size_t offset = offsetof(ovrDistortionVertex, ScreenPosNDC);
-
-      glEnableVertexAttribArray(0);
-      glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)offset);
-
-      offset = offsetof(ovrDistortionVertex, TanEyeAnglesG);
-      glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offset);
-
-    });
-
-    drawer = new shader("passthru", "passthru_red");
-
-    ibo_n = mesh[0].IndexCount;
+    // for source image
+    bb = new billboard();
+    slab = new fbo(512, 512);
+    load_shaders();    
   };
 
   auto draw_proc = [&] {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-//    glDisable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT);
+    // glClearColor(0.1, 0.1, 0.1, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    drawer->use();
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, ibo_n, GL_UNSIGNED_SHORT, 0);
+    // draw test pattern into texture
+    slab->bind();
+    source->use();
+    bb->draw();
 
+    // switch back to drawing to screen
+    fbo::unbind_all();
+
+    // slab->bind_tex();
+    // pass->use();
+    // bb->draw();
+
+    // in the future: ovr->drawEyes(l, r, shader) or similar
+    
+    dist->use();
+    slab->bind_tex();
+    glBindVertexArray(vao[0]);
+    glDrawElements(GL_TRIANGLES, mesh[0].IndexCount, GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(vao[1]);
+    glDrawElements(GL_TRIANGLES, mesh[1].IndexCount, GL_UNSIGNED_SHORT, 0);
+    
   };
 
+
   glfw_app gltest(draw_proc, setup_proc);
+  gltest.set_key_proc([](GLFWwindow *window, int k, int, int a, int) {
+    if(a == GLFW_PRESS) {
+      switch (k) {
+        case 'R': {
+          LOG(INFO) << "reloading shader(s)";
+          load_shaders();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  });
   gltest.run();
 
-//  glDeleteBuffers(1, &vbo);
-//  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(2, vbo);
+  glDeleteVertexArrays(2, vao);
 
   return 0;
 }
