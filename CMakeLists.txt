@@ -35,7 +35,7 @@ add_executable(${target}
 )
 target_link_libraries(${target} ${libs})
 
-set(target xformfbtest)
+set(target tfb)
 add_executable(${target} 
     ${target}.cpp
     ${shared_sources}
