@@ -1,4 +1,4 @@
-          #include <gl_shared.hpp>
+#include <gl_shared.hpp>
 #include <glfw_app.hpp>
 
 #include <billboard.hpp>
