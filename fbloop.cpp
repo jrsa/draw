@@ -51,10 +51,10 @@ void load(scene s) {
   if (warp) {
     delete warp;
   }
-  source =  new shader(s.src);
-  dest =    new shader(s.front);
-  dest2 =   new shader(s.back);
-  warp =    new shader(s.post);
+  source = new shader(s.src);
+  dest = new shader(s.front);
+  dest2 = new shader(s.back);
+  warp = new shader(s.post);
 }
 
 void load_shaders() {
