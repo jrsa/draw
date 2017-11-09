@@ -9,3 +9,12 @@ depends on:
   * glfw3
   * glbinding
   * glog
+  * glm
+
+to build:
+
+    cd <repo>
+    mkdir build
+    cd build
+    cmake ..
+    make
