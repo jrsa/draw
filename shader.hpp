@@ -28,6 +28,8 @@ public:
   void u2f(std::string, glm::vec2);
   void u1i(std::string, GLint);
 
+  void u44m(std::string, glm::mat4);
+
   static void setdir(std::string);
 };
 

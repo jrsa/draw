@@ -41,3 +41,11 @@ add_executable(${target}
     ${shared_sources}
 )
 target_link_libraries(${target} ${libs})
+
+set(target box)
+add_executable(${target} 
+    ${target}.cpp
+    glfw_app.cpp
+    shader.cpp
+)
+target_link_libraries(${target} ${libs})

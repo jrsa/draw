@@ -84,6 +84,12 @@ void shader::u1i(std::string name, GLint value) {
   glUniform1i(u, value);
 }
 
+void shader::u44m(std::string name, glm::mat4 m) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());  
+  glUniformMatrix4fv(u, 1, GL_FALSE, glm::value_ptr(m));
+}
+
 std::string shader::dir;
 
 void shader::setdir(std::string d) {
