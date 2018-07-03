@@ -49,3 +49,12 @@ add_executable(${target}
     shader.cpp
 )
 target_link_libraries(${target} ${libs})
+
+set(target q)
+add_executable(${target}
+    ${target}.cpp
+    billboard.cpp
+    glfw_app.cpp
+    shader.cpp
+)
+target_link_libraries(${target} ${libs})
