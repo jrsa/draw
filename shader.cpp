@@ -3,6 +3,8 @@
 #include <fstream>
 #include <glog/logging.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "shader.hpp"
 // #include "simple_file.hpp"
 
@@ -39,9 +41,7 @@ shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fb
 
   if(fbv.size()) {
     std::vector<const GLchar*> varyings;
-    for (std::vector<std::string>::iterator i = fbv.begin();
-         i != fbv.end();
-         ++i) {
+    for (auto i = fbv.begin(); i != fbv.end(); ++i) {
       varyings.push_back(i->c_str());
     }
     glTransformFeedbackVaryings(_program, 2, &varyings[0], GL_INTERLEAVED_ATTRIBS);
