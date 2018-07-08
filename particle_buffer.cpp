@@ -1,18 +1,20 @@
 //
 // Created by James Anderson on 9/29/16.
 //
+#include <cmath> // sqrt
 
 #include "particle_buffer.h"
 #include "vertex_format.h"
 
 using namespace gl;
 
-particle_buffer::particle_buffer(int field_width) {
+particle_buffer::particle_buffer(int a) {
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  area = field_width * field_width;
+  area = a;
+  int field_width = (int)std::sqrt(area);
 
   orig_points = new vert[area];
   point_data = new vert[area];
