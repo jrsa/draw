@@ -80,9 +80,17 @@ void seed_garbage(fbo* dest) {
   delete junk_fbo;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv, char **envp) {
+  const char* shader_path = getenv("SHADER_PATH");
 
-  shader::setdir("/Users/jrsa/code/gl/glsl/img/");
+  if (shader_path)
+  {
+      shader::setdir(shader_path);
+  }
+  else
+  {
+      LOG(FATAL) << "missing SHADER_PATH environment variable";
+  }
 
   srand(0); // just like in the old days
 
