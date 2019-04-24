@@ -24,12 +24,15 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  _window = glfwCreateWindow(640, 480, "", nullptr, nullptr);
+  _window = glfwCreateWindow(800, 600, "", nullptr, nullptr);
 
   if (!_window) {
     LOG(FATAL) << "failed to create window";
   }
   glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+  // XXX: test, this gets called when controllers are plugged in and unplugged
+  set_joy_proc([] (int a, int b) { LOG(WARNING) << a << " " << b; });
 }
 
 glfw_app::~glfw_app() { glfwTerminate(); }
@@ -53,7 +56,18 @@ void glfw_app::run() {
   while (!glfwWindowShouldClose(_window)) {
 
     _draw_proc();
-    glfwSwapBuffers(_window);
+
+    int count;
+    const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+
+    LOG(INFO) << "a" << ": " << (int)buttons[0];
+    LOG(INFO) << "b" << ": " << (int)buttons[1];
+    LOG(INFO) << "sel" << ": " << (int)buttons[8];
+    LOG(INFO) << "start" << ": " << (int)buttons[9];
+
+    // XXX: this is some bullshittery
+    // glfwSwapBuffers(_window);
+    usleep(10000);
     glfwPollEvents();
   }
 }
@@ -68,4 +82,9 @@ void glfw_app::set_fbsize_proc(GLFWframebuffersizefun _p) {
 
 void glfw_app::set_cursor_proc(GLFWcursorposfun cbfun) {
   glfwSetCursorPosCallback(_window, cbfun);
+}
+
+void glfw_app::set_joy_proc(GLFWjoystickfun f)
+{
+    glfwSetJoystickCallback(f);
 }

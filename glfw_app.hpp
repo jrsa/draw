@@ -22,6 +22,7 @@ public:
   void set_key_proc(GLFWkeyfun);
   void set_fbsize_proc(GLFWframebuffersizefun);
   void set_cursor_proc(GLFWcursorposfun);
+  void set_joy_proc(GLFWjoystickfun);
 };
 
 #endif

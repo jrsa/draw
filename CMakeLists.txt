@@ -58,3 +58,10 @@ add_executable(${target}
     shader.cpp
 )
 target_link_libraries(${target} ${libs})
+
+set(target dumb)
+add_executable(${target} 
+    ${target}.cpp
+    glfw_app.cpp
+)
+target_link_libraries(${target} ${libs})
