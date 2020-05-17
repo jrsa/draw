@@ -2,6 +2,8 @@
 #include <glfw_app.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <glog/logging.h>
+
 #include <iostream>
 
 #include <shader.hpp>
@@ -11,7 +13,7 @@ using namespace glm;
 
 shader* draw = nullptr;
 
-int w, h;
+int w = 800, h = 600;
 
 GLfloat vertices[] = {
     -1.f, -1.f, -1.f,
@@ -44,7 +46,16 @@ void load_shaders() {
 }
 
 int main(int argc, char** argv) {
-    shader::setdir("/Users/jrsa/code/gl/glsl/");
+    const char* shader_path = getenv("SHADER_PATH");
+
+    if (shader_path)
+    {
+        shader::setdir(shader_path);
+    }
+    else
+    {
+        LOG(FATAL) << "missing SHADER_PATH environment variable";
+    }
     GLuint vao, vbo, ebo;
 
     auto setup_proc = [&] {
@@ -78,11 +89,11 @@ int main(int argc, char** argv) {
         glBindVertexArray(vao);
         draw->use();
 
-        mat4 model;
-        model = rotate(model, t * radians(10.0f), vec3(0.0f, 0.0f, 1.0f));
+        mat4 model (1.0);
+        model = rotate(model, t * radians(10.0f), vec3(0.0f, 1.0f, 0.0f));
         model = scale(model, vec3(0.5, 0.5, 0.5));
-        mat4 view = lookAt(vec3(1.2f, 1.2f, 1.2f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
-        mat4 proj = perspective(radians(55.0f), 800.0f / 600.0f, 0.10f, 10.0f);
+        mat4 view = lookAt(vec3(1.2f, 1.2f, 1.2f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+        mat4 proj = perspective(radians(55.0f), (float) w / (float) h, 0.10f, 10.0f);
 
         draw->u44m("model", model);
         draw->u44m("view", view);

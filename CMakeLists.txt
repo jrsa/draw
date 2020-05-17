@@ -4,9 +4,12 @@ set (CMAKE_CXX_STANDARD 11)
 find_package(glfw3 REQUIRED)
 find_package(glbinding REQUIRED)
 find_package(glm REQUIRED)
-find_package(glog REQUIRED)
 
-set(libs PUBLIC glbinding::glbinding glfw glog::glog)
+# on arch, the glogConfig.cmake script is not packaged with glog :/
+#find_package(glog REQUIRED)
+set(GLOG_LIBRARY "/usr/lib/libglog.so")
+
+set(libs PUBLIC glbinding::glbinding glfw ${GLOG_LIBRARY})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
