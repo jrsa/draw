@@ -26,6 +26,8 @@ public:
   void use();
   void u1f(std::string, float);
   void u2f(std::string, glm::vec2);
+  void u3f(std::string, glm::vec3);
+  void u4f(std::string, glm::vec4);
   void u1i(std::string, GLint);
 
   void u44m(std::string, glm::mat4);

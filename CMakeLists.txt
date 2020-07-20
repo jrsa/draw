@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 set (CMAKE_CXX_STANDARD 11)
 
 # rebasing these in... not sure how necessary
+set(CMAKE_BUILD_TYPE "Debug")
 set(glbinding_DIR "/usr/local/Cellar/glbinding/2.1.4/")
 
 find_package(glfw3 REQUIRED)
@@ -82,5 +83,6 @@ add_executable(${target}
     billboard.cpp
     glfw_app.cpp
     shader.cpp
+    fbo.cpp
 )
 target_link_libraries(${target} ${libs})

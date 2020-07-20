@@ -19,6 +19,8 @@ fbo::fbo(int h, int w): _colorbuffer_texture_obj(0), _fbo_obj(0) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (int)GL_REPEAT);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorbuffer_texture_obj, 0);
+
+    unbind_all();
 }
 
 fbo::~fbo() {

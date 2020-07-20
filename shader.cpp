@@ -78,6 +78,18 @@ void shader::u2f(std::string name, glm::vec2 value) {
   glUniform2f(u, value.x, value.y);
 }
 
+void shader::u3f(std::string name, glm::vec3 value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform3f(u, value.x, value.y, value.z);
+}
+
+void shader::u4f(std::string name, glm::vec4 value) {
+  use();
+  GLint u = glGetUniformLocation(_program, name.c_str());
+  glUniform4f(u, value.x, value.y, value.z, value.w);
+}
+
 void shader::u1i(std::string name, GLint value) {
   use();
   GLint u = glGetUniformLocation(_program, name.c_str());
