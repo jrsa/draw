@@ -168,7 +168,7 @@ int main(int argc, char **argv, char **envp) {
 
   glfw_app gltest(draw_proc, setup_proc);
 
-  gltest.set_key_proc([](GLFWwindow *window, int k, int, int a, int) {
+  gltest.set_key_proc([](int k, int, int a, int) {
     if(a == GLFW_PRESS) {
       // map number keys to hue uniform in `source`
       if(k >= 48 && k <= 57) {
@@ -199,7 +199,7 @@ int main(int argc, char **argv, char **envp) {
     }
   });
 
-  gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
+  gltest.set_fbsize_proc([](int width, int height) {
     // LOG(WARNING) << "changed window size";
     glViewport(0, 0, width, height);
     allocate_fbos(width, height);

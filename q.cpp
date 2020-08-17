@@ -39,7 +39,7 @@ int main(int argc, const char* argv[])
 
     glfw_app gltest(draw_proc, setup_proc);
 
-    gltest.set_key_proc([](GLFWwindow* window, int k, int, int a, int) {
+    gltest.set_key_proc([](int k, int, int a, int) {
         if (a == GLFW_PRESS) {
             if (k >= 48 && k <= 57) {
                 int code = k - 48;
@@ -57,7 +57,7 @@ int main(int argc, const char* argv[])
         }
     });
 
-    gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
+    gltest.set_fbsize_proc([](int width, int height) {
         glViewport(0, 0, width, height);
     });
 

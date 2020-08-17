@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 
     glfw_app gltest(draw_proc, setup_proc);
 
-    gltest.set_key_proc([](GLFWwindow* window, int k, int, int a, int) {
+    gltest.set_key_proc([](int k, int, int a, int) {
         if (a == GLFW_PRESS) {
             switch (k) {
             case 'C': {
@@ -103,11 +103,11 @@ int main(int argc, char** argv)
         }
     });
 
-    gltest.set_cursor_proc([](GLFWwindow*, double x, double y) {
-        displace->u2f("mouse", glm::vec2(1. / x, 1. / y));
+    gltest.set_cursor_proc([&](double x, double y) {
+        displace->u2f("mouse", glm::vec2(x / h, y / w));
     });
 
-    gltest.set_fbsize_proc([](GLFWwindow* window, int width, int height) {
+    gltest.set_fbsize_proc([](int width, int height) {
         // these only get saved so that the viewport can be restored
         // after drawing FBOs
         w = width;

@@ -11,6 +11,8 @@
 
 #include <glfw_app.hpp>
 
+std::map<GLFWwindow*, glfw_app*> glfw_app::s_instances_;
+
 glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
     : _draw_proc(draw), _setup_proc(setup) {
   if (!glfwInit()) {
@@ -30,11 +32,6 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
     LOG(FATAL) << "failed to create window";
   }
   glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-}
-
-glfw_app::~glfw_app() { glfwTerminate(); }
-
-void glfw_app::run() {
   glfwMakeContextCurrent(_window);
 
   glbinding::Binding::initialize(false);
@@ -49,23 +46,54 @@ void glfw_app::run() {
   LOG(INFO) << "OpenGL " << glbinding::ContextInfo::version()  
             << ", " << glbinding::ContextInfo::renderer();
 
+
+  // install "static" callbacks
+  glfwSetFramebufferSizeCallback(_window, glfw_app::s_fbsizeCb);
+  glfwSetKeyCallback(_window, glfw_app::s_keyCb);
+  glfwSetCursorPosCallback(_window, glfw_app::s_mouseCb);
+
+  s_instances_.insert({_window, this});
+}
+
+glfw_app::glfw_app() : glfw_app([] {}, [] {}) {}
+
+glfw_app::~glfw_app() { glfwTerminate(); }
+
+void glfw_app::run() {
+  run(_draw_proc);
+}
+
+void glfw_app::run(std::function<void()> draw)
+{
   _setup_proc();
   while (!glfwWindowShouldClose(_window)) {
-
-    _draw_proc();
+    draw();
     glfwSwapBuffers(_window);
     glfwPollEvents();
   }
 }
 
-void glfw_app::set_key_proc(GLFWkeyfun _kp) {
-   glfwSetKeyCallback(_window, _kp);
+void glfw_app::set_fbsize_proc(std::function<void(int width, int height)> cb) {
+  _fbsize_proc = cb;
 }
 
-void glfw_app::set_fbsize_proc(GLFWframebuffersizefun _p) {
-  glfwSetFramebufferSizeCallback(_window, _p);
+void glfw_app::set_key_proc(std::function<void(int k, int, int a, int q)> cb) {
+  _key_proc = cb;
 }
 
-void glfw_app::set_cursor_proc(GLFWcursorposfun cbfun) {
-  glfwSetCursorPosCallback(_window, cbfun);
+void glfw_app::set_cursor_proc(std::function<void(double x, double y)> cb) {
+  _cursor_proc = cb;
 }
+
+void glfw_app::s_fbsizeCb(GLFWwindow* win, int width, int height) {
+  glfw_app::s_instances_[win]->_fbsize_proc(width, height);
+}
+
+void glfw_app::s_keyCb(GLFWwindow* win, int k, int q2, int a, int q) {
+  glfw_app::s_instances_[win]->_key_proc(k, q2, a, q);
+}
+
+void glfw_app::s_mouseCb(GLFWwindow* win, double x, double y) {
+  glfw_app::s_instances_[win]->_cursor_proc(x, y);
+}
+
