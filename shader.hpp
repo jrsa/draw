@@ -32,6 +32,8 @@ public:
 
   void u44m(std::string, glm::mat4);
 
+  void reload();
+
   static void setdir(std::string);
 };
 

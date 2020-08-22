@@ -85,12 +85,23 @@ void glfw_app::set_cursor_proc(std::function<void(double x, double y)> cb) {
   _cursor_proc = cb;
 }
 
+void glfw_app::onkey(int k, std::function<void()> cb) {
+  LOG(INFO) << "adding keypress handler for " << (char)k;
+  _onkey_procs[k] = cb;
+}
+
 void glfw_app::s_fbsizeCb(GLFWwindow* win, int width, int height) {
   glfw_app::s_instances_[win]->_fbsize_proc(width, height);
 }
 
 void glfw_app::s_keyCb(GLFWwindow* win, int k, int q2, int a, int q) {
   glfw_app::s_instances_[win]->_key_proc(k, q2, a, q);
+
+  auto procs = glfw_app::s_instances_[win]->_onkey_procs;
+  auto proc = procs.find(k);
+  if (proc != procs.end() && a == GLFW_PRESS) {
+    proc->second();
+  }
 }
 
 void glfw_app::s_mouseCb(GLFWwindow* win, double x, double y) {

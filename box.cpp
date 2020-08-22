@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
             draw.u2f("mouse", glm::vec2(xnorm, ynorm));
         });
 
-        gltest.onkey('r', [&draw] () { draw.reload(); });
+        gltest.onkey('R', [&draw] () { draw.reload(); });
 
         // run, with "frame" callback ---------------------------------------------------- 
         gltest.run([&] {

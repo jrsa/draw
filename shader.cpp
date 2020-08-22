@@ -108,6 +108,10 @@ void shader::setdir(std::string d) {
   dir = d;
 }
 
+void shader::reload() {
+  LOG(INFO) << "reloading shaders (or rather, should be...)";
+}
+
 void compile_info(const GLuint shader) {
   GLint status(0);
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);

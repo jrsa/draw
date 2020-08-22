@@ -16,6 +16,8 @@ private:
   std::function<void(int width, int height)> _fbsize_proc = [] (int, int) {};
   std::function<void(double x, double y)> _cursor_proc =    [] (double, double) {};
 
+  std::map<int, std::function<void()>> _onkey_procs;
+
   static std::map<GLFWwindow*, glfw_app*> s_instances_;
 
 public:
@@ -31,6 +33,8 @@ public:
   void set_fbsize_proc(std::function<void(int width, int height)>);
   void set_key_proc(std::function<void(int k, int, int a, int)>);
   void set_cursor_proc(std::function<void(double x, double y)>);
+
+  void onkey(int k, std::function<void()>);
 
   // pass these to glfw to call, then figure out which glfw_app instance to call
   // based on the window pointer
