@@ -66,6 +66,11 @@ void glfw_app::run() {
 void glfw_app::run(std::function<void()> draw)
 {
   _setup_proc();
+
+  int width, height;
+  glfwGetFramebufferSize(_window, &width, &height);
+  _fbsize_proc(width, height);
+
   while (!glfwWindowShouldClose(_window)) {
     draw();
     glfwSwapBuffers(_window);
