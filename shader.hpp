@@ -12,7 +12,11 @@ class shader {
 private:
   GLuint _program;
   static std::string dir;
-  std::string _vname, _fname;
+
+  std::string vertex_shader_name_;
+  std::string fragment_shader_name_;
+
+  std::vector<std::string> feedback_varying_names_;
 
 public:
   shader(std::string filename, std::vector<std::string> fbv);

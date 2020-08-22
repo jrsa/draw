@@ -19,41 +19,13 @@ void variable_info(const GLuint program);
 std::string error_name ("<not loaded>");
 
 shader::shader(std::string vs_fn, std::string fs_fn, std::vector<std::string> fbv)
-  : _vname(error_name), _fname(error_name) {
-  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+  : 
+    vertex_shader_name_(vs_fn),
+    fragment_shader_name_(fs_fn),
+    feedback_varying_names_(fbv)
 
-  LOG(INFO) << "loading: " << vs_fn;
-  load_shader(vs, dir + vs_fn + ".vs.glsl");
-
-  LOG(INFO) << "loading: " << fs_fn;
-  load_shader(fs, dir + fs_fn + ".fs.glsl");
-
-  glCompileShader(vs);
-  compile_info(vs);
-
-  glCompileShader(fs);
-  compile_info(fs);
-
-  _program = glCreateProgram();
-  glAttachShader(_program, vs);
-  glAttachShader(_program, fs);
-
-  if(fbv.size()) {
-    std::vector<const GLchar*> varyings;
-    for (auto i = fbv.begin(); i != fbv.end(); ++i) {
-      varyings.push_back(i->c_str());
-    }
-    glTransformFeedbackVaryings(_program, 2, &varyings[0], GL_INTERLEAVED_ATTRIBS);
-  }
-
-  glLinkProgram(_program);
-  link_info(_program);
-
-  _vname = vs_fn;
-  _fname = fs_fn;
-
-  variable_info(_program);
+{
+  reload();
 }
 
 shader::shader(std::string filename, std::vector<std::string> fbv): shader(filename, filename, fbv) {}
@@ -109,7 +81,37 @@ void shader::setdir(std::string d) {
 }
 
 void shader::reload() {
-  LOG(INFO) << "reloading shaders (or rather, should be...)";
+  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+
+  LOG(INFO) << "loading: " << vertex_shader_name_;
+  load_shader(vs, dir + vertex_shader_name_ + ".vs.glsl");
+
+  LOG(INFO) << "loading: " << fragment_shader_name_;
+  load_shader(fs, dir + fragment_shader_name_ + ".fs.glsl");
+
+  glCompileShader(vs);
+  compile_info(vs);
+
+  glCompileShader(fs);
+  compile_info(fs);
+
+  _program = glCreateProgram();
+  glAttachShader(_program, vs);
+  glAttachShader(_program, fs);
+
+  if(feedback_varying_names_.size()) {
+    std::vector<const GLchar*> varyings;
+    for (auto i = feedback_varying_names_.begin(); i != feedback_varying_names_.end(); ++i) {
+      varyings.push_back(i->c_str());
+    }
+    glTransformFeedbackVaryings(_program, varyings.size(), &varyings[0], GL_INTERLEAVED_ATTRIBS);
+  }
+
+  glLinkProgram(_program);
+
+  link_info(_program);
+  variable_info(_program);
 }
 
 void compile_info(const GLuint shader) {

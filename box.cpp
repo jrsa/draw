@@ -65,9 +65,13 @@ int main(int argc, char** argv) {
             mat4 view = lookAt(vec3(1.2f, 1.2f, 1.2f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
             mat4 proj = perspective(radians(55.0f), (float) w / (float) h, 0.10f, 10.0f);
 
+            draw.use();
+
             draw.u44m("model", model);
             draw.u44m("view", view);
             draw.u44m("proj", proj);
+
+            draw.u1f("time", glfwGetTime());
 
             b.draw();
         });
