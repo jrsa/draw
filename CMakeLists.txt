@@ -4,7 +4,6 @@ set (CMAKE_CXX_STANDARD 11)
 
 # rebasing these in... not sure how necessary
 set(CMAKE_BUILD_TYPE "Debug")
-set(glbinding_DIR "/usr/local/Cellar/glbinding/2.1.4/")
 
 find_package(glfw3 REQUIRED)
 find_package(glbinding REQUIRED)
@@ -16,16 +15,12 @@ find_package(glm REQUIRED)
 
 find_package(glog REQUIRED)
 set(libs PUBLIC glbinding::glbinding glbinding::glbinding-aux glfw glog::glog
-    # if i wasnt a lazy asshole i would just write a cmake script to pull this in ._.
-    /Users/jrsa/Desktop/OculusSDK/LibOVR/Lib/Mac/Release/libovr.a
     /System/Library/Frameworks/Cocoa.framework
     /System/Library/Frameworks/IOKit.framework
     )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     /usr/local/include
-    # ditto for this, lazy asshole
-    /Users/jrsa/Desktop/OculusSDK/LibOVR/Include
     )
 
 # will be made into the library compilation target
