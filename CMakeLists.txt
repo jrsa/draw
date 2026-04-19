@@ -15,7 +15,7 @@ find_package(glm REQUIRED)
 # set(libs PUBLIC glbinding::glbinding glfw ${GLOG_LIBRARY})
 
 find_package(glog REQUIRED)
-set(libs PUBLIC glbinding::glbinding glfw glog::glog
+set(libs PUBLIC glbinding::glbinding glbinding::glbinding-aux glfw glog::glog
     # if i wasnt a lazy asshole i would just write a cmake script to pull this in ._.
     /Users/jrsa/Desktop/OculusSDK/LibOVR/Lib/Mac/Release/libovr.a
     /System/Library/Frameworks/Cocoa.framework
