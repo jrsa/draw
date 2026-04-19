@@ -5,8 +5,6 @@
 #include <glbinding/Version.h>
 
 #include <gl_shared.hpp>
-#include <iomanip>
-#include <sstream>
 
 #include <glfw_app.hpp>
 

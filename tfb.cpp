@@ -3,7 +3,6 @@
 
 #include <chrono>
 
-#include "gl_shared.hpp"
 #include "glfw_app.hpp"
 #include "shader.hpp"
 #include "particle_buffer.h"

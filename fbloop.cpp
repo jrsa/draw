@@ -4,7 +4,7 @@
 
 #include "billboard.hpp"
 #include "fbo.h"
-#include "gl_shared.hpp"
+// #include "gl_shared.hpp"
 #include "glfw_app.hpp"
 #include "scene.hpp"
 #include "shader.hpp"
