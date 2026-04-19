@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.12)
+project(draw)
 set (CMAKE_CXX_STANDARD 11)
 
 # rebasing these in... not sure how necessary
