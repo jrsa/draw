@@ -1,8 +1,7 @@
 #include <glog/logging.h>
 
-#include <glbinding/Binding.h>
-#include <glbinding/Meta.h>
-#include <glbinding/ContextInfo.h>
+#include <glbinding-aux/ContextInfo.h>
+#include <glbinding/glbinding.h>
 #include <glbinding/Version.h>
 
 #include <gl_shared.hpp>
@@ -34,17 +33,17 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   glfwMakeContextCurrent(_window);
 
-  glbinding::Binding::initialize(false);
+  glbinding::initialize(glfwGetProcAddress);
   glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, { "glGetError" });
   glbinding::setAfterCallback([](const glbinding::FunctionCall& call) {
     const auto error = gl::glGetError();
     if (error != gl::GL_NO_ERROR) {
-      LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << error; 
+      LOG(ERROR) << "error in " << call.function->name() << ": " << std::hex << (int) error; 
     }
   });
 
-  LOG(INFO) << "OpenGL " << glbinding::ContextInfo::version()  
-            << ", " << glbinding::ContextInfo::renderer();
+  LOG(INFO) << "OpenGL " << glbinding::aux::ContextInfo::version().toString() 
+            << ", " << glbinding::aux::ContextInfo::renderer();
 
 
   // install "static" callbacks
