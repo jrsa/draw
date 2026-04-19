@@ -78,12 +78,12 @@ add_executable(${target}
 target_link_libraries(${target} ${libs})
 
 
-set(target meshtest)
-add_executable(${target}
-    ${target}.cpp
-    billboard.cpp
-    glfw_app.cpp
-    shader.cpp
-    fbo.cpp
-)
-target_link_libraries(${target} ${libs})
+# set(target meshtest)
+# add_executable(${target}
+#     ${target}.cpp
+#     billboard.cpp
+#     glfw_app.cpp
+#     shader.cpp
+#     fbo.cpp
+# )
+# target_link_libraries(${target} ${libs})
