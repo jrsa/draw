@@ -9,6 +9,7 @@
 class glfw_app {
 private:
   GLFWwindow *_window;
+  std::string title_;
 
   std::function<void()> _draw_proc;
   std::function<void()> _setup_proc;
@@ -20,15 +21,23 @@ private:
 
   static std::map<GLFWwindow*, glfw_app*> s_instances_;
 
+
+
 public:
   // the old way
-  glfw_app(std::function<void()> draw, std::function<void()> setup);
+  glfw_app(std::function<void()> draw, std::function<void()> setup, std::string title);
   ~glfw_app();
   void run();
 
   // the new way
   glfw_app();
   void run(std::function<void()> draw);
+
+  // the other way
+  glfw_app(std::function<void()> draw, std::function<void()> setup);
+
+  // meh
+  // glfw_app(std::string );
 
   void set_fbsize_proc(std::function<void(int width, int height)>);
   void set_key_proc(std::function<void(int k, int, int a, int)>);

@@ -166,7 +166,7 @@ int main(int argc, char **argv, char **envp) {
     bb->draw();
   };
 
-  glfw_app gltest(draw_proc, setup_proc);
+  glfw_app gltest(draw_proc, setup_proc, front_fs);
 
   gltest.set_key_proc([](int k, int, int a, int) {
     if(a == GLFW_PRESS) {

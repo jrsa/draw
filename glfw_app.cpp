@@ -10,8 +10,8 @@
 
 std::map<GLFWwindow*, glfw_app*> glfw_app::s_instances_;
 
-glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
-    : _draw_proc(draw), _setup_proc(setup) {
+glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup, std::string title)
+    : _draw_proc(draw), _setup_proc(setup), title_(title) {
   if (!glfwInit()) {
     LOG(FATAL) << "failed to initialize glfw";
   }
@@ -23,7 +23,7 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  _window = glfwCreateWindow(640, 480, "", nullptr, nullptr);
+  _window = glfwCreateWindow(640, 480, title_.c_str(), nullptr, nullptr);
 
   if (!_window) {
     LOG(FATAL) << "failed to create window";
@@ -67,7 +67,8 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   s_instances_.insert({_window, this});
 }
 
-glfw_app::glfw_app() : glfw_app([] {}, [] {}) {}
+glfw_app::glfw_app() : glfw_app([] {}, [] {}, "") {}
+glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup) : glfw_app(draw, setup, "") {}
 
 glfw_app::~glfw_app() { glfwTerminate(); }
 
