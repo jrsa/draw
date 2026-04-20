@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
   });
 
   gltest.set_cursor_proc([](double x, double y){
-    particle_fb->u2f("mousePos", glm::vec2(1/x, 1/y));
+    particle_fb->u2f("mousePos", glm::vec2(x, y));
   });
 
   gltest.set_fbsize_proc([](int width, int height) {

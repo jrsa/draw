@@ -210,6 +210,10 @@ int main(int argc, char **argv, char **envp) {
     h = height;
   });
 
+  gltest.set_cursor_proc([&](double x, double y) {
+      dest->u2f("mouse", glm::vec2(x, y));
+  });
+
   gltest.run();
   return 0;
 }

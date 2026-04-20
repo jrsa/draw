@@ -123,6 +123,9 @@ void glfw_app::s_keyCb(GLFWwindow* win, int k, int q2, int a, int q) {
 }
 
 void glfw_app::s_mouseCb(GLFWwindow* win, double x, double y) {
-  glfw_app::s_instances_[win]->_cursor_proc(x, y);
+  int width{};
+  int height{};
+  glfwGetWindowSize(win, &width, &height);
+  glfw_app::s_instances_[win]->_cursor_proc(x/width, y/height);
 }
 
