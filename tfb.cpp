@@ -39,11 +39,9 @@ int main(int argc, char **argv) {
   auto t_prev = std::chrono::high_resolution_clock::now();
 
   auto setup_proc = [&] {
-    glbinding::Binding::initialize(false);
-
     w = 640;
     h = 480;
-    glViewport(0, 0, 640, 480);
+    glViewport(0, 0, w, h);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
