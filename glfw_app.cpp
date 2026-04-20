@@ -28,7 +28,22 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup)
   if (!_window) {
     LOG(FATAL) << "failed to create window";
   }
-  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+  onkey(' ', [&] () {
+
+    auto mode = glfwGetInputMode(_window, GLFW_CURSOR);
+    auto new_mode = mode == GLFW_CURSOR_HIDDEN ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN;
+    switch (new_mode) {
+      case GLFW_CURSOR_HIDDEN:
+        LOG(INFO) << "hiding cursor";
+        break;
+      case GLFW_CURSOR_NORMAL:
+        LOG(INFO) << "showing cursor";
+        break;
+    };
+    glfwSetInputMode(_window, GLFW_CURSOR, new_mode);
+  });
+
   glfwMakeContextCurrent(_window);
 
   glbinding::initialize(glfwGetProcAddress);
