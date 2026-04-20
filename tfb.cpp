@@ -29,7 +29,13 @@ void load_shaders() {
 }
 
 int main(int argc, char **argv) {
-  shader::setdir("/Users/jrsa/code/gl/glsl/");
+  const char* shader_path = getenv("SHADER_PATH");
+
+  if (shader_path) {
+    shader::setdir(shader_path);
+  } else {
+    LOG(FATAL) << "missing SHADER_PATH environment variable";
+  }
   auto t_prev = std::chrono::high_resolution_clock::now();
 
   auto setup_proc = [&] {
