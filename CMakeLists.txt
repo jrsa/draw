@@ -5,23 +5,14 @@ set (CMAKE_CXX_STANDARD 11)
 # for clang LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# rebasing these in... not sure how necessary
-set(CMAKE_BUILD_TYPE "Debug")
-
 find_package(glfw3 REQUIRED)
 find_package(glbinding REQUIRED)
 find_package(glm REQUIRED)
-
-# on arch, the glogConfig.cmake script is not packaged with glog :/
-# set(GLOG_LIBRARY "/usr/lib/libglog.so")
-# set(libs PUBLIC glbinding::glbinding glfw ${GLOG_LIBRARY})
-
 find_package(glog REQUIRED)
+
 set(libs PUBLIC glbinding::glbinding glbinding::glbinding-aux glfw glog::glog)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-    /usr/local/include
-    )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # will be made into the library compilation target
 set(shared_sources
