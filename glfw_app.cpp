@@ -22,6 +22,8 @@ glfw_app::glfw_app(std::function<void()> draw, std::function<void()> setup, std:
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  // glfwWindowHint(GLFW_RESIZABLE, 1);
+  // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 
   _window = glfwCreateWindow(640, 480, title_.c_str(), nullptr, nullptr);
 
