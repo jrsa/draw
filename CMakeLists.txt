@@ -17,10 +17,7 @@ find_package(glm REQUIRED)
 # set(libs PUBLIC glbinding::glbinding glfw ${GLOG_LIBRARY})
 
 find_package(glog REQUIRED)
-set(libs PUBLIC glbinding::glbinding glbinding::glbinding-aux glfw glog::glog
-    /System/Library/Frameworks/Cocoa.framework
-    /System/Library/Frameworks/IOKit.framework
-    )
+set(libs PUBLIC glbinding::glbinding glbinding::glbinding-aux glfw glog::glog)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     /usr/local/include
