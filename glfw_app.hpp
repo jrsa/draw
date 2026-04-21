@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <functional>
 #include <map>
+#include <string>
 
 class glfw_app {
 private:
@@ -20,8 +21,6 @@ private:
   std::map<int, std::function<void()>> _onkey_procs;
 
   static std::map<GLFWwindow*, glfw_app*> s_instances_;
-
-
 
 public:
   // the old way
