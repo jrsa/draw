@@ -21,55 +21,39 @@ set(shared_sources
     particle_buffer.cpp
     fbo.cpp
     billboard.cpp
-    )
+)
+
+add_library(libdraw SHARED ${shared_sources})
+target_link_libraries(libdraw ${libs})
 
 
-# will go in demos/ folder or something
 set(target point)
 add_executable(${target} 
     ${target}.cpp
-    ${shared_sources}
 )
-target_link_libraries(${target} ${libs})
+target_link_libraries(${target} libdraw)
 
 set(target fbloop)
 add_executable(${target} 
     ${target}.cpp
-    ${shared_sources}
 )
-target_link_libraries(${target} ${libs})
+target_link_libraries(${target} libdraw)
 
 set(target tfb)
 add_executable(${target} 
     ${target}.cpp
-    ${shared_sources}
 )
-target_link_libraries(${target} ${libs})
+target_link_libraries(${target} libdraw)
 
 set(target box)
 add_executable(${target} 
     ${target}.cpp
-    glfw_app.cpp
-    shader.cpp
 )
-target_link_libraries(${target} ${libs})
+target_link_libraries(${target} libdraw)
 
 set(target q)
 add_executable(${target}
     ${target}.cpp
-    billboard.cpp
-    glfw_app.cpp
-    shader.cpp
 )
-target_link_libraries(${target} ${libs})
+target_link_libraries(${target} libdraw)
 
-
-# set(target meshtest)
-# add_executable(${target}
-#     ${target}.cpp
-#     billboard.cpp
-#     glfw_app.cpp
-#     shader.cpp
-#     fbo.cpp
-# )
-# target_link_libraries(${target} ${libs})
