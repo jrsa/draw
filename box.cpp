@@ -37,9 +37,7 @@ int main(int argc, char** argv) {
         });
 
         gltest.set_cursor_proc([&](double x, double y) {
-            float xnorm = x / w;
-            float ynorm = y / h;
-            draw.u2f("mouse", glm::vec2(xnorm, ynorm));
+            draw.u2f("mouse", glm::vec2(x, y));
         });
 
         gltest.onkey('R', [&draw] () { draw.reload(); });
