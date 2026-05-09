@@ -3,6 +3,8 @@
 
 #include <gl_shared.hpp>
 
+using namespace gl;
+
 class box {
     // indexed mesh
     GLfloat vertices_[24] = {
