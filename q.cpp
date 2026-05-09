@@ -14,16 +14,7 @@ int h = 0, w = 0;
 
 int main(int argc, const char* argv[])
 {
-    const char* shader_path = getenv("SHADER_PATH");
-
-    if (shader_path)
-    {
-        shader::setdir(shader_path);
-    }
-    else
-    {
-        LOG(FATAL) << "missing SHADER_PATH environment variable";
-    }
+    shader::initialize_dir("img/");
 
     if (argc >= 2) {
         filename = argv[1];

@@ -29,7 +29,7 @@ void load_shaders()
 
 int main(int argc, char** argv)
 {
-    shader::setdir("/Users/jrsa/code/gl/glsl/");
+    shader::initialize_dir();
     GLuint vao, vbo;
 
     auto setup_proc = [&] {

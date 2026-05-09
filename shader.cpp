@@ -80,6 +80,23 @@ void shader::setdir(std::string d) {
   dir = d;
 }
 
+
+void shader::initialize_dir(std::string subdir) {
+  const char* shader_path = getenv("SHADER_PATH");
+  std::string path{};
+  if (shader_path)
+  {
+    path = shader_path;
+  }
+  else
+  {
+    path = "./glsl/";
+  }
+  std::string fullpath{path + subdir};
+  LOG(INFO) << "full shader path: " << fullpath;
+  shader::setdir(fullpath);
+}
+
 void shader::reload() {
   GLuint vs = glCreateShader(GL_VERTEX_SHADER);
   GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);

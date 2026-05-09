@@ -81,16 +81,7 @@ void seed_garbage(fbo* dest) {
 }
 
 int main(int argc, char **argv, char **envp) {
-  const char* shader_path = getenv("SHADER_PATH");
-
-  if (shader_path)
-  {
-      shader::setdir(shader_path);
-  }
-  else
-  {
-      LOG(FATAL) << "missing SHADER_PATH environment variable";
-  }
+  shader::initialize_dir("img/");
 
   srand(0); // just like in the old days
 
@@ -200,7 +191,7 @@ int main(int argc, char **argv, char **envp) {
   });
 
   gltest.set_fbsize_proc([](int width, int height) {
-    // LOG(WARNING) << "changed window size";
+    LOG(WARNING) << "changed window size (" << width << "x" << height << ")";
     glViewport(0, 0, width, height);
     allocate_fbos(width, height);
     dest->u2f("dims", glm::vec2(width, height));

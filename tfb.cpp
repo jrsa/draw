@@ -29,13 +29,7 @@ void load_shaders() {
 }
 
 int main(int argc, char **argv) {
-  const char* shader_path = getenv("SHADER_PATH");
-
-  if (shader_path) {
-    shader::setdir(shader_path);
-  } else {
-    LOG(FATAL) << "missing SHADER_PATH environment variable";
-  }
+  shader::initialize_dir();
   auto t_prev = std::chrono::high_resolution_clock::now();
 
   auto setup_proc = [&] {

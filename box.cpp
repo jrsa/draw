@@ -11,16 +11,7 @@ using namespace gl;
 using namespace glm;
 
 int main(int argc, char** argv) {
-    const char* shader_path = getenv("SHADER_PATH");
-
-    if (shader_path)
-    {
-        shader::setdir(shader_path);
-    }
-    else
-    {
-        LOG(FATAL) << "missing SHADER_PATH environment variable";
-    }
+    shader::initialize_dir();
 
     glfw_app gltest;
 

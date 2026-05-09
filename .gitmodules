@@ -1,0 +1,3 @@
+[submodule "glsl"]
+	path = glsl
+	url = https://github.com/jrsa/glsl_shaders

@@ -39,6 +39,7 @@ public:
   void reload();
 
   static void setdir(std::string);
+  static void initialize_dir(std::string subdir = "");
 };
 
 #endif
