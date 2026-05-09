@@ -106,6 +106,10 @@ int main(int argc, char **argv, char **envp) {
     post_fs = argv[3];
   }
 
+  if (argc >= 5) {
+    src_fs = argv[4];
+  }
+
   scn.src = std::make_pair(default_vs, src_fs);
   scn.back = std::make_pair(default_vs, back_fs);
   scn.post = std::make_pair(default_vs, post_fs);
